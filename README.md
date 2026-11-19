@@ -1,6 +1,6 @@
-# Ledgerline Accounting — website
+# NorthStarCPA — website
 
-A responsive marketing website for **Ledgerline Accounting**, a fictional Canadian CPA firm. It is a static site with plain HTML, CSS and a little vanilla JavaScript: no build step and no dependencies apart from Google Fonts.
+A responsive marketing website for **NorthStarCPA**, an online Canadian CPA firm. It is a static site with plain HTML, CSS and a little vanilla JavaScript: no build step and no dependencies apart from Google Fonts.
 
 Live site (GitHub Pages): <https://jatinrishi5.github.io/Test/>
 
