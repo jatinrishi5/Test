@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ledgerline Accounting | Tax, Bookkeeping &amp; Advisory</title>
-  <meta name="description" content="Ledgerline Accounting helps small businesses and individuals with tax planning, bookkeeping, payroll, audit and advisory services.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ledgerline Accounting | Tax &amp; Accounting for Canadians</title>
+  <meta name="description" content="Ledgerline Accounting is an online CPA firm helping Canadian individuals and small businesses with personal tax, corporate tax, bookkeeping, payroll and advisory.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
@@ -13,6 +13,18 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Contact details on every screen (top bar on desktop, bottom bar on mobile) -->
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <ul class="topbar-contact">
+        <li><a href="tel:+15550100000">(555) 010-0000</a></li>
+        <li><a href="mailto:hello@example.com">hello@example.com</a></li>
+        <li class="topbar-hours">Mon–Fri 9:00–5:30 ET · 100% online across Canada</li>
+      </ul>
+      <a class="topbar-portal" href="#portal">Client portal</a>
+    </div>
+  </div>
 
   <header class="site-header" id="top">
     <div class="container header-inner">
@@ -31,11 +43,12 @@
       <nav id="site-nav" class="site-nav" aria-label="Main">
         <ul>
           <li><a href="#services">Services</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#team">Team</a></li>
           <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#tax-centre">Tax Centre</a></li>
+          <li><a href="#about">About</a></li>
           <li><a href="#faq">FAQ</a></li>
-          <li><a href="#contact" class="btn btn-primary btn-sm">Book a consultation</a></li>
+          <li class="nav-portal"><a href="#portal">Client portal</a></li>
+          <li class="nav-cta"><a href="#book" class="btn btn-primary btn-sm">Book a consultation</a></li>
         </ul>
       </nav>
     </div>
@@ -46,32 +59,50 @@
     <section class="hero">
       <div class="container hero-inner">
         <div class="hero-copy">
-          <p class="eyebrow">Certified public accountants</p>
+          <p class="eyebrow">Online CPA firm · Serving all of Canada</p>
           <h1>Clear numbers. Confident decisions.</h1>
-          <p class="lead">Ledgerline handles your taxes, books and payroll so you can focus on running your business. Straightforward advice, fixed fees and a team that answers the phone.</p>
+          <p class="lead">Personal tax, corporate tax and bookkeeping handled by Chartered Professional Accountants. Fixed fees, plain-language advice, and replies within one business day.</p>
           <div class="hero-actions">
-            <a href="#contact" class="btn btn-primary">Book a consultation</a>
-            <a href="#services" class="btn btn-ghost">Explore services</a>
-          </div>
-          <ul class="hero-points">
-            <li>Free 30-minute first meeting</li>
-            <li>Fixed monthly pricing</li>
-            <li>Secure client portal</li>
-          </ul>
-        </div>
-        <div class="hero-card" aria-hidden="true">
-          <div class="hc-header">
-            <span>Quarterly summary</span>
-            <span class="hc-tag">Q3</span>
-          </div>
-          <div class="hc-row"><span>Revenue</span><strong>$482,300</strong></div>
-          <div class="hc-row"><span>Operating costs</span><strong>$311,950</strong></div>
-          <div class="hc-row"><span>Est. tax savings</span><strong class="pos">+$18,400</strong></div>
-          <div class="hc-bars">
-            <span style="height:40%"></span><span style="height:55%"></span><span style="height:48%"></span>
-            <span style="height:66%"></span><span style="height:72%"></span><span style="height:84%"></span>
+            <a href="#book" class="btn btn-primary">Book a free consultation</a>
+            <a href="#pricing" class="btn btn-ghost">See pricing</a>
           </div>
         </div>
+
+        <div class="paths" aria-label="Start here">
+          <a class="path" href="#pricing" data-open-tab="tab-personal">
+            <span class="path-label">For individuals &amp; families</span>
+            <span class="path-title">Personal tax returns</span>
+            <span class="path-meta">From $89 per return <span aria-hidden="true">→</span></span>
+          </a>
+          <a class="path" href="#pricing" data-open-tab="tab-business">
+            <span class="path-label">For self-employed &amp; corporations</span>
+            <span class="path-title">Business accounting</span>
+            <span class="path-meta">From $299 per month <span aria-hidden="true">→</span></span>
+          </a>
+        </div>
+      </div>
+
+      <div class="container">
+        <dl class="hero-stats">
+          <div><dt>Combined experience</dt><dd>15+ yrs</dd></div>
+          <div><dt>Returns filed last season</dt><dd>500+</dd></div>
+          <div><dt>Response time</dt><dd>1 day</dd></div>
+          <div><dt>Online, Canada-wide</dt><dd>100%</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- Credentials & software -->
+    <section class="trust" aria-labelledby="trust-title">
+      <div class="container trust-inner">
+        <h2 id="trust-title" class="trust-title">Designations &amp; software we work with</h2>
+        <ul class="trust-list">
+          <li>CPA</li>
+          <li>CRA EFILE</li>
+          <li>QuickBooks Online</li>
+          <li>Xero</li>
+          <li>TaxCycle</li>
+        </ul>
       </div>
     </section>
 
@@ -79,139 +110,75 @@
     <section id="services" class="section">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">What we do</p>
-          <h2>Services built around your business</h2>
-          <p>From year-end returns to an outsourced finance department, choose the support you need.</p>
+          <p class="eyebrow">Services</p>
+          <h2>What do you need help with?</h2>
+          <p>Five focused services for individuals and owner-managed businesses.</p>
         </div>
         <div class="grid services-grid">
           <article class="card service">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>
-            </div>
-            <h3>Tax preparation &amp; planning</h3>
-            <p>Personal and business returns filed accurately and on time, plus year-round planning to legally reduce what you owe.</p>
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg></div>
+            <p class="tag">Personal</p>
+            <h3>Personal tax returns</h3>
+            <p>T1 returns for employees, students, newcomers, retirees, landlords and investors, plus prior-year and amended returns.</p>
           </article>
           <article class="card service">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 9h16M9 9v10"/></svg>
-            </div>
-            <h3>Bookkeeping</h3>
-            <p>Monthly reconciliations, categorised transactions and clean financial statements delivered on a schedule you can count on.</p>
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg></div>
+            <p class="tag">Business</p>
+            <h3>Small business &amp; corporate tax</h3>
+            <p>T2125 self-employment income, T2 corporate returns, GST/HST filings and year-end financial statements.</p>
           </article>
           <article class="card service">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 11h5M18.5 8.5v5"/></svg>
-            </div>
-            <h3>Payroll</h3>
-            <p>Pay your team correctly every time. We run payroll, handle withholdings and file the required payroll tax forms.</p>
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 9h16M9 9v10"/></svg></div>
+            <p class="tag">Business</p>
+            <h3>Bookkeeping &amp; payroll</h3>
+            <p>Monthly reconciliations in QuickBooks Online or Xero, payroll runs, remittances, and T4 slips at year end.</p>
           </article>
           <article class="card service">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>
-            </div>
-            <h3>Audit &amp; assurance</h3>
-            <p>Independent reviews, compilations and audits that give lenders, investors and boards confidence in your numbers.</p>
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2"/><circle cx="12" cy="12" r="5"/></svg></div>
+            <p class="tag">Business</p>
+            <h3>Business set-up</h3>
+            <p>Sole proprietorship or corporation? We help you choose, incorporate, and register your CRA business number, GST/HST and payroll accounts.</p>
           </article>
           <article class="card service">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="M7 15l4-4 3 3 5-6"/></svg>
-            </div>
-            <h3>Business advisory</h3>
-            <p>Entity selection, cash-flow forecasting, pricing analysis and growth planning grounded in your actual data.</p>
-          </article>
-          <article class="card service">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M15 9.5c0-1.4-1.3-2-3-2s-3 .8-3 2.2c0 3 6 1.6 6 4.6 0 1.4-1.3 2.2-3 2.2s-3-.7-3-2"/></svg>
-            </div>
-            <h3>CFO services</h3>
-            <p>Part-time, senior-level finance leadership: budgeting, KPIs, board reporting and fundraising support without a full-time hire.</p>
+            <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+            <p class="tag">Business</p>
+            <h3>Advisory &amp; fractional CFO</h3>
+            <p>Cash-flow forecasts, budgets, salary vs. dividend planning, and lender-ready reporting without a full-time hire.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- About -->
-    <section id="about" class="section section-alt">
-      <div class="container about-inner">
-        <div class="about-copy">
-          <p class="eyebrow">Why Ledgerline</p>
-          <h2>An accounting partner, not just a tax preparer</h2>
-          <p>Founded in 2004, Ledgerline is an independent firm serving owner-led businesses, professionals and families. We combine the care of a small practice with the depth of a larger one.</p>
-          <ul class="checklist">
-            <li><strong>One dedicated accountant</strong> who knows your file and answers within one business day.</li>
-            <li><strong>Transparent, fixed fees</strong> agreed up front. No surprise invoices.</li>
-            <li><strong>Proactive advice</strong> through quarterly check-ins, not just at year end.</li>
-            <li><strong>Bank-level security</strong> for every document you share with us.</li>
-          </ul>
-        </div>
-        <dl class="stats">
-          <div class="stat"><dt>Years in practice</dt><dd>20+</dd></div>
-          <div class="stat"><dt>Active clients</dt><dd>1,200</dd></div>
-          <div class="stat"><dt>Returns filed yearly</dt><dd>3,500</dd></div>
-          <div class="stat"><dt>Client retention</dt><dd>96%</dd></div>
-        </dl>
-      </div>
-    </section>
-
-    <!-- Team -->
-    <section id="team" class="section">
+    <!-- How it works -->
+    <section id="how" class="section section-alt">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Our people</p>
-          <h2>Meet the team</h2>
-          <p>Placeholder profiles. Replace with your own team members.</p>
+          <p class="eyebrow">How it works</p>
+          <h2>How does working with us look?</h2>
+          <p>Four steps, all online. Most personal returns are filed within 5 business days of receiving your documents.</p>
         </div>
-        <div class="grid team-grid">
-          <article class="card member">
-            <div class="avatar" aria-hidden="true">AM</div>
-            <h3>Alex Morgan, CPA</h3>
-            <p class="role">Managing Partner</p>
-            <p>Leads tax strategy for owner-managed businesses and oversees firm quality.</p>
-          </article>
-          <article class="card member">
-            <div class="avatar avatar-teal" aria-hidden="true">PS</div>
-            <h3>Priya Shah, CPA</h3>
-            <p class="role">Audit &amp; Assurance Lead</p>
-            <p>Runs our review and audit engagements for nonprofits and growing companies.</p>
-          </article>
-          <article class="card member">
-            <div class="avatar avatar-gold" aria-hidden="true">JR</div>
-            <h3>Jordan Reyes, EA</h3>
-            <p class="role">Senior Tax Advisor</p>
-            <p>Specialises in individual returns, IRS representation and multi-state filings.</p>
-          </article>
-          <article class="card member">
-            <div class="avatar avatar-slate" aria-hidden="true">SK</div>
-            <h3>Sam Kim</h3>
-            <p class="role">Client Accounting Manager</p>
-            <p>Keeps monthly bookkeeping and payroll clients running smoothly and on schedule.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- Testimonials -->
-    <section id="testimonials" class="section section-dark">
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow">Client stories</p>
-          <h2>What clients say</h2>
-          <p>Sample testimonials for illustration only.</p>
-        </div>
-        <div class="grid testimonials-grid">
-          <figure class="quote">
-            <blockquote><p>“Our books were a mess when we started. Three months later we had clean statements and a plan to cut our tax bill.”</p></blockquote>
-            <figcaption><strong>Placeholder Client</strong><span>Owner, design studio</span></figcaption>
-          </figure>
-          <figure class="quote">
-            <blockquote><p>“Having a part-time CFO helped us prepare for our first funding round. Worth every penny.”</p></blockquote>
-            <figcaption><strong>Placeholder Client</strong><span>Co-founder, software startup</span></figcaption>
-          </figure>
-          <figure class="quote">
-            <blockquote><p>“They answer my questions quickly and in plain English. Tax season is finally stress-free.”</p></blockquote>
-            <figcaption><strong>Placeholder Client</strong><span>Independent consultant</span></figcaption>
-          </figure>
-        </div>
+        <ol class="steps">
+          <li class="step-card">
+            <span class="step-num" aria-hidden="true">1</span>
+            <h3>Book a free 20-minute call</h3>
+            <p>Tell us about your situation. You'll get a fixed quote before any work starts.</p>
+          </li>
+          <li class="step-card">
+            <span class="step-num" aria-hidden="true">2</span>
+            <h3>Upload documents securely</h3>
+            <p>Use our client portal and checklist. No email attachments, no office visit.</p>
+          </li>
+          <li class="step-card">
+            <span class="step-num" aria-hidden="true">3</span>
+            <h3>We prepare and review</h3>
+            <p>A CPA prepares your file, a second accountant reviews it, and we walk you through the results.</p>
+          </li>
+          <li class="step-card">
+            <span class="step-num" aria-hidden="true">4</span>
+            <h3>E-file and plan ahead</h3>
+            <p>We file with the CRA and send reminders for instalments and next year's deadlines.</p>
+          </li>
+        </ol>
       </div>
     </section>
 
@@ -219,49 +186,237 @@
     <section id="pricing" class="section">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Engagement packages</p>
-          <h2>Simple, fixed monthly pricing</h2>
-          <p>Example packages. Every engagement starts with a free consultation and a written quote.</p>
+          <p class="eyebrow">Pricing</p>
+          <h2>What will it cost?</h2>
+          <p>Fixed fees in Canadian dollars, plus applicable tax. Example prices; your exact quote follows the free call.</p>
         </div>
-        <div class="grid pricing-grid">
-          <article class="card plan">
-            <h3>Essentials</h3>
-            <p class="plan-desc">For freelancers and early-stage businesses.</p>
-            <p class="price"><span class="amount">$249</span><span class="per">/month</span></p>
-            <ul>
-              <li>Monthly bookkeeping (up to 100 transactions)</li>
-              <li>Annual business tax return</li>
-              <li>Quarterly estimated tax reminders</li>
-              <li>Email support</li>
-            </ul>
-            <a href="#contact" class="btn btn-outline">Get started</a>
+
+        <div class="tabs" data-tabs>
+          <div class="tablist" role="tablist" aria-label="Pricing for">
+            <button type="button" role="tab" id="tab-personal" aria-controls="panel-personal" aria-selected="true">Personal</button>
+            <button type="button" role="tab" id="tab-business" aria-controls="panel-business" aria-selected="false" tabindex="-1">Business</button>
+          </div>
+
+          <div class="tabpanel" role="tabpanel" id="panel-personal" aria-labelledby="tab-personal" tabindex="0">
+            <div class="grid pricing-grid">
+              <article class="card plan">
+                <h3>Basic</h3>
+                <p class="plan-desc">One or two T4 slips and standard credits.</p>
+                <p class="price"><span class="amount">$89</span><span class="per">/return</span></p>
+                <ul>
+                  <li>T1 return for employment income</li>
+                  <li>RRSP, tuition, medical &amp; donation credits</li>
+                  <li>GST/HST credit &amp; Canada Child Benefit check</li>
+                  <li>CRA e-filing</li>
+                </ul>
+                <a href="#book" class="btn btn-outline" data-plan="Personal · Basic" data-type="personal">Choose Basic</a>
+              </article>
+              <article class="card plan plan-featured">
+                <p class="badge">Most popular</p>
+                <h3>Standard</h3>
+                <p class="plan-desc">Investments, one rental property, or a move.</p>
+                <p class="price"><span class="amount">$179</span><span class="per">/return</span></p>
+                <ul>
+                  <li>Everything in Basic</li>
+                  <li>Investment income (T3, T5, T5008)</li>
+                  <li>One rental property</li>
+                  <li>Moving, childcare &amp; home office expenses</li>
+                  <li>Spousal return optimization</li>
+                </ul>
+                <a href="#book" class="btn btn-primary" data-plan="Personal · Standard" data-type="personal">Choose Standard</a>
+              </article>
+              <article class="card plan">
+                <h3>Comprehensive</h3>
+                <p class="plan-desc">Self-employed, several properties or foreign income.</p>
+                <p class="price"><span class="from">from</span><span class="amount">$349</span><span class="per">/return</span></p>
+                <ul>
+                  <li>Everything in Standard</li>
+                  <li>Self-employment income (T2125)</li>
+                  <li>Multiple rentals &amp; capital gains</li>
+                  <li>Foreign income &amp; T1135 reporting</li>
+                  <li>Year-round tax questions by email</li>
+                </ul>
+                <a href="#book" class="btn btn-outline" data-plan="Personal · Comprehensive" data-type="personal">Choose Comprehensive</a>
+              </article>
+            </div>
+          </div>
+
+          <div class="tabpanel" role="tabpanel" id="panel-business" aria-labelledby="tab-business" tabindex="0" hidden>
+            <div class="grid pricing-grid">
+              <article class="card plan">
+                <h3>Accountant</h3>
+                <p class="plan-desc">Compliance for sole proprietors and new corporations.</p>
+                <p class="price"><span class="amount">$299</span><span class="per">/month</span></p>
+                <ul>
+                  <li>Monthly bookkeeping (up to 100 transactions)</li>
+                  <li>GST/HST returns</li>
+                  <li>Annual T2 or T2125 and financial statements</li>
+                  <li>Email support</li>
+                </ul>
+                <a href="#book" class="btn btn-outline" data-plan="Business · Accountant" data-type="business">Choose Accountant</a>
+              </article>
+              <article class="card plan plan-featured">
+                <p class="badge">Most popular</p>
+                <h3>Controller</h3>
+                <p class="plan-desc">For growing businesses with staff.</p>
+                <p class="price"><span class="amount">$799</span><span class="per">/month</span></p>
+                <ul>
+                  <li>Everything in Accountant</li>
+                  <li>Payroll for up to 15 employees, T4s &amp; ROEs</li>
+                  <li>Monthly close &amp; management reports</li>
+                  <li>Quarterly tax-planning call</li>
+                  <li>Owner's personal T1 return</li>
+                </ul>
+                <a href="#book" class="btn btn-primary" data-plan="Business · Controller" data-type="business">Choose Controller</a>
+              </article>
+              <article class="card plan">
+                <h3>CFO</h3>
+                <p class="plan-desc">Senior finance leadership for scaling companies.</p>
+                <p class="price"><span class="from">from</span><span class="amount">$1,999</span><span class="per">/month</span></p>
+                <ul>
+                  <li>Everything in Controller</li>
+                  <li>Budgets, forecasts &amp; KPI reporting</li>
+                  <li>Salary vs. dividend &amp; remuneration planning</li>
+                  <li>Lender, investor &amp; board reporting</li>
+                </ul>
+                <a href="#book" class="btn btn-outline" data-plan="Business · CFO" data-type="business">Choose CFO</a>
+              </article>
+            </div>
+          </div>
+        </div>
+        <p class="pricing-note">Not sure which fits? <a href="#book">Answer three quick questions</a> and we'll suggest a package.</p>
+      </div>
+    </section>
+
+    <!-- Tax Centre -->
+    <section id="tax-centre" class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Tax Centre</p>
+          <h2>When is everything due, and what do I need?</h2>
+          <p>Key CRA dates for the 2026 tax year and a checklist to gather your documents.</p>
+        </div>
+
+        <div class="tc-grid">
+          <div class="card tc-card">
+            <h3>Key CRA deadlines</h3>
+            <ol class="deadlines" id="deadlines">
+              <li data-date="2026-12-15"><time datetime="2026-12-15">Dec 15, 2026</time><span>Fourth quarterly instalment for individuals who pay by instalments</span></li>
+              <li data-date="2027-03-01"><time datetime="2027-03-01">Mar 1, 2027</time><span>RRSP contribution deadline for 2026. T4, T4A and T5 slips due to employees and the CRA</span></li>
+              <li data-date="2027-03-31"><time datetime="2027-03-31">Mar 31, 2027</time><span>T3 trust returns for trusts with a December 31 year end</span></li>
+              <li data-date="2027-04-30"><time datetime="2027-04-30">Apr 30, 2027</time><span>Personal tax returns due, and any balance owing must be paid, including for the self-employed</span></li>
+              <li data-date="2027-06-15"><time datetime="2027-06-15">Jun 15, 2027</time><span>Filing deadline for self-employed individuals and their spouses</span></li>
+              <li data-date="2027-06-30"><time datetime="2027-06-30">Jun 30, 2027</time><span>T2 corporate return due for corporations with a December 31 year end</span></li>
+            </ol>
+            <p class="small-print">General information only. When a date falls on a weekend or holiday, the CRA treats a return as on time if filed the next business day. Confirm dates on canada.ca.</p>
+          </div>
+
+          <div class="card tc-card">
+            <h3>Document checklist</h3>
+            <div class="tabs" data-tabs>
+              <div class="tablist tablist-sm" role="tablist" aria-label="Checklist for">
+                <button type="button" role="tab" id="tab-cl-personal" aria-controls="panel-cl-personal" aria-selected="true">Personal</button>
+                <button type="button" role="tab" id="tab-cl-business" aria-controls="panel-cl-business" aria-selected="false" tabindex="-1">Business</button>
+              </div>
+              <div class="tabpanel checklist" role="tabpanel" id="panel-cl-personal" aria-labelledby="tab-cl-personal" tabindex="0">
+                <p class="cl-count" aria-live="polite"><span>0</span> of 9 ready</p>
+                <ul>
+                  <li><label><input type="checkbox"> Last year's Notice of Assessment</label></li>
+                  <li><label><input type="checkbox"> T4 slips from every employer</label></li>
+                  <li><label><input type="checkbox"> T3, T5 and T5008 investment slips</label></li>
+                  <li><label><input type="checkbox"> RRSP and FHSA contribution receipts</label></li>
+                  <li><label><input type="checkbox"> T2202 tuition slips</label></li>
+                  <li><label><input type="checkbox"> Medical, childcare and donation receipts</label></li>
+                  <li><label><input type="checkbox"> Rent or property tax paid (for provincial credits)</label></li>
+                  <li><label><input type="checkbox"> Rental or self-employment income and expenses</label></li>
+                  <li><label><input type="checkbox"> Details of any foreign income or property</label></li>
+                </ul>
+              </div>
+              <div class="tabpanel checklist" role="tabpanel" id="panel-cl-business" aria-labelledby="tab-cl-business" tabindex="0" hidden>
+                <p class="cl-count" aria-live="polite"><span>0</span> of 9 ready</p>
+                <ul>
+                  <li><label><input type="checkbox"> Bank and credit card statements for the year</label></li>
+                  <li><label><input type="checkbox"> Sales invoices and expense receipts</label></li>
+                  <li><label><input type="checkbox"> Access to QuickBooks Online or Xero, if used</label></li>
+                  <li><label><input type="checkbox"> Payroll summaries and T4 Summary</label></li>
+                  <li><label><input type="checkbox"> GST/HST returns filed during the year</label></li>
+                  <li><label><input type="checkbox"> Asset purchases and sales (equipment, vehicles)</label></li>
+                  <li><label><input type="checkbox"> Vehicle logbook for business kilometres</label></li>
+                  <li><label><input type="checkbox"> Loan and lease statements</label></li>
+                  <li><label><input type="checkbox"> Prior-year T2 and Notice of Assessment</label></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section">
+      <div class="container">
+        <div class="about-inner">
+          <div class="about-copy">
+            <p class="eyebrow">About us</p>
+            <h2>Why choose Ledgerline?</h2>
+            <p>We're a small, independent CPA firm built for people who want a real accountant, not a call centre. Everything happens online, so we can serve clients in every province.</p>
+          </div>
+          <ul class="beliefs">
+            <li><h3>Plain language</h3><p>We explain what we did and why, without jargon.</p></li>
+            <li><h3>Fixed fees</h3><p>You approve the quote before we start. No surprise invoices.</p></li>
+            <li><h3>Proactive, all year</h3><p>Reminders and check-ins, not just a rush every April.</p></li>
+            <li><h3>Secure by default</h3><p>Encrypted portal with two-factor sign-in for every document.</p></li>
+          </ul>
+        </div>
+
+        <h3 class="team-title" id="team">Meet the team <span>(placeholder profiles)</span></h3>
+        <div class="grid team-grid">
+          <article class="card member">
+            <div class="avatar" aria-hidden="true">AM</div>
+            <h4>Alex Morgan, CPA</h4>
+            <p class="role">Founder &amp; Principal</p>
+            <p>Former Big Four senior tax manager. Leads corporate tax and owner-manager planning.</p>
           </article>
-          <article class="card plan plan-featured">
-            <p class="badge">Most popular</p>
-            <h3>Growth</h3>
-            <p class="plan-desc">For established small businesses with staff.</p>
-            <p class="price"><span class="amount">$599</span><span class="per">/month</span></p>
-            <ul>
-              <li>Everything in Essentials</li>
-              <li>Payroll for up to 15 employees</li>
-              <li>Quarterly tax planning meeting</li>
-              <li>Owner's personal tax return</li>
-              <li>Phone &amp; video support</li>
-            </ul>
-            <a href="#contact" class="btn btn-primary">Get started</a>
+          <article class="card member">
+            <div class="avatar avatar-teal" aria-hidden="true">PS</div>
+            <h4>Priya Shah, CPA</h4>
+            <p class="role">Personal Tax Lead</p>
+            <p>Focuses on newcomers, rental properties, investors and cross-border income.</p>
           </article>
-          <article class="card plan">
-            <h3>Partner</h3>
-            <p class="plan-desc">For scaling companies that need a finance team.</p>
-            <p class="price"><span class="amount">$1,499</span><span class="per">/month</span></p>
-            <ul>
-              <li>Everything in Growth</li>
-              <li>Fractional CFO (8 hrs/month)</li>
-              <li>Budgets, forecasts &amp; KPI dashboard</li>
-              <li>Board and lender reporting</li>
-            </ul>
-            <a href="#contact" class="btn btn-outline">Get started</a>
+          <article class="card member">
+            <div class="avatar avatar-slate" aria-hidden="true">SK</div>
+            <h4>Sam Kim</h4>
+            <p class="role">Bookkeeping &amp; Payroll Manager</p>
+            <p>QuickBooks Online and Xero certified. Keeps monthly clients closed on time.</p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="reviews" class="section section-dark">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Client reviews</p>
+          <h2>What do clients say?</h2>
+          <p>Sample reviews for illustration. Replace with verified Google reviews.</p>
+        </div>
+        <div class="grid testimonials-grid">
+          <figure class="quote">
+            <p class="stars" aria-label="5 out of 5 stars">★★★★★</p>
+            <blockquote><p>“First year in Canada and I had no idea what to file. They explained every credit and found benefits I didn't know about.”</p></blockquote>
+            <figcaption><strong>Sample client</strong><span>Newcomer, personal return</span></figcaption>
+          </figure>
+          <figure class="quote">
+            <p class="stars" aria-label="5 out of 5 stars">★★★★★</p>
+            <blockquote><p>“They incorporated my business, set up GST/HST and payroll, and now my books are done every month without me chasing anyone.”</p></blockquote>
+            <figcaption><strong>Sample client</strong><span>Owner, renovation company</span></figcaption>
+          </figure>
+          <figure class="quote">
+            <p class="stars" aria-label="5 out of 5 stars">★★★★★</p>
+            <blockquote><p>“Fixed price, quick replies, and a clear plan for salary versus dividends. Tax season is finally stress-free.”</p></blockquote>
+            <figcaption><strong>Sample client</strong><span>Consultant, incorporated</span></figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -277,110 +432,188 @@
           <div class="acc-item">
             <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-1" id="faq-1-btn">Do you work with clients outside your city?<span class="acc-icon" aria-hidden="true"></span></button></h3>
             <div class="acc-panel" id="faq-1" role="region" aria-labelledby="faq-1-btn" hidden>
-              <p>Yes. Most of our work happens through our secure portal and video calls, so we serve clients across the country.</p>
+              <p>Yes. We're fully online. Meetings happen by video or phone, documents go through our secure portal, and we file electronically with the CRA, so we serve clients across Canada.</p>
             </div>
           </div>
           <div class="acc-item">
-            <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-2" id="faq-2-btn">What should I bring to my first consultation?<span class="acc-icon" aria-hidden="true"></span></button></h3>
+            <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-2" id="faq-2-btn">When is the personal tax deadline?<span class="acc-icon" aria-hidden="true"></span></button></h3>
             <div class="acc-panel" id="faq-2" role="region" aria-labelledby="faq-2-btn" hidden>
-              <p>Your most recent tax returns and, for businesses, the latest profit and loss statement and balance sheet. If you don't have these, that's fine. We'll help you pull them together.</p>
+              <p>For the 2026 tax year, returns are due April 30, 2027. If you or your spouse are self-employed, you have until June 15, 2027 to file, but any balance owing is still due April 30. Interest starts on unpaid amounts after that date. See the <a href="#tax-centre">Tax Centre</a> for all key dates.</p>
             </div>
           </div>
           <div class="acc-item">
-            <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-3" id="faq-3-btn">Can you switch us from our current accountant?<span class="acc-icon" aria-hidden="true"></span></button></h3>
+            <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-3" id="faq-3-btn">How much does a tax return cost?<span class="acc-icon" aria-hidden="true"></span></button></h3>
             <div class="acc-panel" id="faq-3" role="region" aria-labelledby="faq-3-btn" hidden>
-              <p>Absolutely. With your permission we request prior-year files directly from your previous accountant and handle the transition for you.</p>
+              <p>A Basic personal return starts at $89, Standard at $179 and Comprehensive at $349. Business packages start at $299 per month. We confirm a fixed fee after the free consultation, before any work starts.</p>
             </div>
           </div>
           <div class="acc-item">
-            <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-4" id="faq-4-btn">Which accounting software do you support?<span class="acc-icon" aria-hidden="true"></span></button></h3>
+            <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-4" id="faq-4-btn">I'm behind on filing or got a letter from the CRA. Can you help?<span class="acc-icon" aria-hidden="true"></span></button></h3>
             <div class="acc-panel" id="faq-4" role="region" aria-labelledby="faq-4-btn" hidden>
-              <p>We work with all major cloud accounting platforms and can recommend the right setup if you're starting fresh.</p>
+              <p>Yes. We file missed prior-year returns, respond to CRA review and reassessment letters, and set up payment arrangements. Once you authorize us through the CRA's Represent a Client service, we can speak to the CRA on your behalf.</p>
             </div>
           </div>
           <div class="acc-item">
-            <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-5" id="faq-5-btn">How do you keep my information secure?<span class="acc-icon" aria-hidden="true"></span></button></h3>
+            <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-5" id="faq-5-btn">Should I incorporate my business?<span class="acc-icon" aria-hidden="true"></span></button></h3>
             <div class="acc-panel" id="faq-5" role="region" aria-labelledby="faq-5-btn" hidden>
-              <p>Documents are exchanged through an encrypted client portal with multi-factor authentication. We never ask for sensitive data by regular email.</p>
+              <p>It depends on your profit, whether you need all of it to live on, and your liability risk. Incorporating can lower tax on money you leave in the business, but it adds a T2 return and more bookkeeping. We'll run both scenarios with your numbers before you decide.</p>
+            </div>
+          </div>
+          <div class="acc-item">
+            <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-6" id="faq-6-btn">Which accounting software do you support?<span class="acc-icon" aria-hidden="true"></span></button></h3>
+            <div class="acc-panel" id="faq-6" role="region" aria-labelledby="faq-6-btn" hidden>
+              <p>We work in QuickBooks Online and Xero. If you're starting fresh, we'll recommend one, set it up, and connect your bank feeds.</p>
+            </div>
+          </div>
+          <div class="acc-item">
+            <h3><button type="button" class="acc-trigger" aria-expanded="false" aria-controls="faq-7" id="faq-7-btn">How do you keep my information secure?<span class="acc-icon" aria-hidden="true"></span></button></h3>
+            <div class="acc-panel" id="faq-7" role="region" aria-labelledby="faq-7-btn" hidden>
+              <p>Documents are exchanged through an encrypted client portal with two-factor sign-in. We never ask for your SIN or financial documents by regular email.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact" class="section">
+    <!-- Booking / intake -->
+    <section id="book" class="section">
       <div class="container contact-inner">
         <div class="contact-info">
-          <p class="eyebrow">Get in touch</p>
-          <h2>Book a free consultation</h2>
-          <p>Tell us a little about your situation and we'll get back to you within one business day.</p>
+          <p class="eyebrow">Book a consultation</p>
+          <h2>Start with a free 20-minute call</h2>
+          <p>Answer three quick questions. We'll suggest a package and reply within one business day to schedule your call.</p>
           <ul class="contact-list">
-            <li>
-              <span class="ci-label">Address</span>
-              <address>123 Example Street, Suite 400<br>Springfield, ST 00000</address>
-            </li>
-            <li>
-              <span class="ci-label">Phone</span>
-              <a href="tel:+15550100000">(555) 010-0000</a>
-            </li>
-            <li>
-              <span class="ci-label">Email</span>
-              <a href="mailto:hello@example.com">hello@example.com</a>
-            </li>
-            <li>
-              <span class="ci-label">Hours</span>
-              <span>Mon–Fri, 9:00am – 5:30pm</span>
-            </li>
+            <li><span class="ci-label">Phone</span><a href="tel:+15550100000">(555) 010-0000</a></li>
+            <li><span class="ci-label">Email</span><a href="mailto:hello@example.com">hello@example.com</a></li>
+            <li><span class="ci-label">Office</span><address>123 Example Street, Suite 400<br>Toronto, ON A1A 1A1 (by appointment)</address></li>
+            <li><span class="ci-label">Hours</span><span>Mon–Fri, 9:00am – 5:30pm ET</span></li>
           </ul>
-        </div>
-
-        <div class="card contact-card">
-          <form id="contact-form" class="contact-form" novalidate>
-            <div class="field">
-              <label for="name">Full name <span class="req" aria-hidden="true">*</span></label>
-              <input id="name" name="name" type="text" autocomplete="name" required aria-describedby="name-error">
-              <p class="error" id="name-error"></p>
-            </div>
-            <div class="field">
-              <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
-              <input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-error">
-              <p class="error" id="email-error"></p>
-            </div>
-            <div class="field">
-              <label for="phone">Phone <span class="optional">(optional)</span></label>
-              <input id="phone" name="phone" type="tel" autocomplete="tel" aria-describedby="phone-error">
-              <p class="error" id="phone-error"></p>
-            </div>
-            <div class="field">
-              <label for="service">Service of interest <span class="req" aria-hidden="true">*</span></label>
-              <select id="service" name="service" required aria-describedby="service-error">
-                <option value="">Select a service</option>
-                <option>Tax preparation &amp; planning</option>
-                <option>Bookkeeping</option>
-                <option>Payroll</option>
-                <option>Audit &amp; assurance</option>
-                <option>Business advisory</option>
-                <option>CFO services</option>
-                <option>Not sure yet</option>
-              </select>
-              <p class="error" id="service-error"></p>
-            </div>
-            <div class="field">
-              <label for="message">How can we help? <span class="req" aria-hidden="true">*</span></label>
-              <textarea id="message" name="message" rows="4" required aria-describedby="message-error"></textarea>
-              <p class="error" id="message-error"></p>
-            </div>
-            <p class="form-note"><span aria-hidden="true">*</span> Required field. This demo form does not send data anywhere.</p>
-            <button type="submit" class="btn btn-primary btn-block">Request consultation</button>
-          </form>
-          <div id="form-success" class="form-success" role="status" tabindex="-1" hidden>
-            <div class="success-icon" aria-hidden="true">✓</div>
-            <h3>Thank you!</h3>
-            <p>Your request has been received. A member of our team will contact you within one business day.</p>
-            <button type="button" class="btn btn-outline" id="form-reset">Send another message</button>
+          <div class="portal-card" id="portal">
+            <h3>Already a client?</h3>
+            <p>Upload documents, sign engagement letters and message your accountant in the secure client portal.</p>
+            <p class="small-print">Placeholder: link this to your practice-management portal.</p>
           </div>
         </div>
+
+        <div class="card intake-card">
+          <form id="intake" class="intake" novalidate>
+            <div class="progress">
+              <div class="progress-meta"><span id="step-label">Step 1 of 3</span><span id="step-name">About you</span></div>
+              <div class="progress-track" role="progressbar" aria-labelledby="step-label" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1"><span class="progress-fill"></span></div>
+            </div>
+            <p class="plan-note" id="plan-note" hidden></p>
+
+            <fieldset class="step" data-step="1" data-name="About you">
+              <legend class="step-title" tabindex="-1">Who is this for?</legend>
+              <div class="choice-grid">
+                <label class="choice"><input type="radio" name="clientType" value="personal"><span><strong>Personal</strong><small>My own or my family's taxes</small></span></label>
+                <label class="choice"><input type="radio" name="clientType" value="business"><span><strong>Business</strong><small>Self-employed or a corporation</small></span></label>
+                <label class="choice"><input type="radio" name="clientType" value="both"><span><strong>Both</strong><small>My business and my personal return</small></span></label>
+              </div>
+              <p class="error" id="clientType-error"></p>
+              <div class="step-actions"><button type="button" class="btn btn-primary" data-next>Next</button></div>
+            </fieldset>
+
+            <fieldset class="step" data-step="2" data-name="Your situation" hidden>
+              <legend class="step-title" tabindex="-1">What applies to you?</legend>
+              <p class="hint">Select all that apply.</p>
+              <div class="check-group" data-group="personal">
+                <p class="group-label">Personal</p>
+                <label><input type="checkbox" name="personal" value="employment"> Employment income (T4)</label>
+                <label><input type="checkbox" name="personal" value="investments"> Investments or savings income</label>
+                <label><input type="checkbox" name="personal" value="student"> Student or recent graduate</label>
+                <label><input type="checkbox" name="personal" value="newcomer"> New to Canada</label>
+                <label><input type="checkbox" name="personal" value="rental"> Rental property</label>
+                <label><input type="checkbox" name="personal" value="selfemployed"> Self-employed or side business</label>
+                <label><input type="checkbox" name="personal" value="sold"> Sold property, shares or crypto</label>
+                <label><input type="checkbox" name="personal" value="foreign"> Foreign income or assets</label>
+              </div>
+              <div class="check-group" data-group="business">
+                <p class="group-label">Business</p>
+                <label><input type="checkbox" name="business" value="soleprop"> Sole proprietor</label>
+                <label><input type="checkbox" name="business" value="corp"> Incorporated</label>
+                <label><input type="checkbox" name="business" value="planning"> Planning to incorporate</label>
+                <label><input type="checkbox" name="business" value="books"> Need monthly bookkeeping</label>
+                <label><input type="checkbox" name="business" value="gst"> GST/HST registered</label>
+                <label><input type="checkbox" name="business" value="payroll"> Have employees</label>
+                <label><input type="checkbox" name="business" value="cfo"> Want forecasts or CFO support</label>
+              </div>
+              <div class="fit" aria-live="polite">
+                <span class="fit-label">Suggested package</span>
+                <strong id="fit-result">Select what applies to see a suggestion</strong>
+              </div>
+              <p class="error" id="situation-error"></p>
+              <div class="step-actions">
+                <button type="button" class="btn btn-outline" data-back>Back</button>
+                <button type="button" class="btn btn-primary" data-next>Next</button>
+              </div>
+            </fieldset>
+
+            <fieldset class="step" data-step="3" data-name="Contact details" hidden>
+              <legend class="step-title" tabindex="-1">How can we reach you?</legend>
+              <div class="field">
+                <label for="name">Full name <span class="req" aria-hidden="true">*</span></label>
+                <input id="name" name="name" type="text" autocomplete="name" required aria-describedby="name-error">
+                <p class="error" id="name-error"></p>
+              </div>
+              <div class="field">
+                <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+                <input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-error">
+                <p class="error" id="email-error"></p>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="phone">Phone <span class="optional">(optional)</span></label>
+                  <input id="phone" name="phone" type="tel" autocomplete="tel" aria-describedby="phone-error">
+                  <p class="error" id="phone-error"></p>
+                </div>
+                <div class="field">
+                  <label for="province">Province or territory</label>
+                  <select id="province" name="province">
+                    <option value="">Select</option>
+                    <option>Alberta</option><option>British Columbia</option><option>Manitoba</option>
+                    <option>New Brunswick</option><option>Newfoundland and Labrador</option><option>Nova Scotia</option>
+                    <option>Ontario</option><option>Prince Edward Island</option><option>Quebec</option>
+                    <option>Saskatchewan</option><option>Northwest Territories</option><option>Nunavut</option><option>Yukon</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="message">Anything else we should know? <span class="optional">(optional)</span></label>
+                <textarea id="message" name="message" rows="3"></textarea>
+              </div>
+              <p class="form-note"><span aria-hidden="true">*</span> Required. This demo form does not send data anywhere.</p>
+              <div class="step-actions">
+                <button type="button" class="btn btn-outline" data-back>Back</button>
+                <button type="submit" class="btn btn-primary">Request consultation</button>
+              </div>
+            </fieldset>
+          </form>
+
+          <div id="intake-success" class="form-success" role="status" tabindex="-1" hidden>
+            <div class="success-icon" aria-hidden="true">✓</div>
+            <h3 id="success-title">Request received</h3>
+            <p id="success-text"></p>
+            <button type="button" class="btn btn-outline" id="intake-reset">Start a new request</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section id="newsletter" class="newsletter">
+      <div class="container newsletter-inner">
+        <div>
+          <h2>The Ledger Minute</h2>
+          <p>One short email a month: upcoming CRA deadlines and one tax tip you can use. No spam.</p>
+        </div>
+        <form id="newsletter-form" class="newsletter-form" novalidate>
+          <label for="nl-email" class="sr-only">Email address</label>
+          <input id="nl-email" name="nl-email" type="email" placeholder="you@example.com" autocomplete="email" aria-describedby="nl-error">
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+          <p class="error" id="nl-error"></p>
+          <p class="nl-success" id="nl-success" role="status" hidden>You're subscribed. Look for the next issue at the start of the month.</p>
+        </form>
       </div>
     </section>
   </main>
@@ -392,40 +625,30 @@
           <span class="logo-mark" aria-hidden="true">L</span>
           <span class="logo-text">Ledgerline<span class="logo-sub">Accounting</span></span>
         </a>
-        <p>Independent accountants for businesses and families since 2004.</p>
+        <p>Chartered Professional Accountants · Online across Canada</p>
       </div>
-      <nav class="footer-col" aria-label="Services">
-        <h2>Services</h2>
-        <ul>
-          <li><a href="#services">Tax planning</a></li>
-          <li><a href="#services">Bookkeeping</a></li>
-          <li><a href="#services">Payroll</a></li>
-          <li><a href="#services">CFO services</a></li>
-        </ul>
-      </nav>
-      <nav class="footer-col" aria-label="Company">
-        <h2>Company</h2>
-        <ul>
-          <li><a href="#about">About</a></li>
-          <li><a href="#team">Team</a></li>
+      <nav aria-label="Footer">
+        <ul class="footer-links">
+          <li><a href="#services">Services</a></li>
           <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#tax-centre">Tax Centre</a></li>
+          <li><a href="#about">About</a></li>
           <li><a href="#faq">FAQ</a></li>
+          <li><a href="#book">Book a consultation</a></li>
         </ul>
       </nav>
-      <div class="footer-col">
-        <h2>Contact</h2>
-        <ul>
-          <li><a href="tel:+15550100000">(555) 010-0000</a></li>
-          <li><a href="mailto:hello@example.com">hello@example.com</a></li>
-          <li><a href="#contact">Book a consultation</a></li>
-        </ul>
-      </div>
     </div>
     <div class="container footer-bottom">
       <p>&copy; <span id="year">2026</span> Ledgerline Accounting. Fictional firm for demonstration purposes.</p>
-      <a href="#top">Back to top ↑</a>
+      <p><a href="tel:+15550100000">(555) 010-0000</a> · <a href="mailto:hello@example.com">hello@example.com</a></p>
     </div>
   </footer>
+
+  <!-- Mobile contact bar -->
+  <div class="mobile-cta" id="mobile-cta">
+    <a href="tel:+15550100000" class="btn btn-outline-light">Call</a>
+    <a href="#book" class="btn btn-primary">Book a consultation</a>
+  </div>
 
   <script src="js/main.js"></script>
 </body>
