@@ -225,6 +225,9 @@
       if (selected && list.hasAttribute('data-active')) list.setAttribute('data-active', String(i));
     });
     if (focus) tab.focus();
+    if (list.scrollWidth > list.clientWidth) {
+      list.scrollTo({ left: Math.max(0, tab.offsetLeft - list.offsetLeft - 8), behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
   }
 
   $$('[role="tablist"]').forEach(function (list) {
