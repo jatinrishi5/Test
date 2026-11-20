@@ -561,6 +561,40 @@
     }, { threshold: 0.15 }).observe(book);
   }
 
+  // ---------- Software logos: seamless, gap-free loop at any width ----------
+  var marquee = $('#marquee');
+  if (marquee && !reduceMotion) {
+    var track = $('.marquee-track', marquee);
+    var original = $('.marquee-group', track);
+    var SPEED = 45; // pixels per second
+
+    var fillMarquee = function () {
+      $$('.marquee-group[data-clone]', track).forEach(function (g) { g.remove(); });
+      var groupWidth = original.getBoundingClientRect().width;
+      if (!groupWidth) return;
+      // Copies needed so the strip is always full while one set scrolls out.
+      var copies = Math.max(2, Math.ceil(marquee.clientWidth / groupWidth) + 1);
+      $$('.marquee-group', track).forEach(function (g) { if (g !== original) g.remove(); });
+      for (var i = 1; i < copies; i++) {
+        var clone = original.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        clone.setAttribute('data-clone', '');
+        $$('img', clone).forEach(function (img) { img.alt = ''; });
+        track.appendChild(clone);
+      }
+      track.style.setProperty('--shift', groupWidth + 'px');
+      track.style.setProperty('--duration', (groupWidth / SPEED) + 's');
+    };
+
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(fillMarquee, 150);
+    });
+    window.addEventListener('load', fillMarquee);
+    fillMarquee();
+  }
+
   // ---------- Footer year ----------
   var year = $('#year');
   if (year) year.textContent = new Date().getFullYear();
