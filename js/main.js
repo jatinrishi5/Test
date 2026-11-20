@@ -57,11 +57,23 @@
   }
 
   // ---------- Hero persona + example ledger ----------
+  var SVC = {
+    personal: ['svc-tab-1', 'Personal tax returns'],
+    selfemp: ['svc-tab-2', 'Self-employed & small business tax'],
+    corp: ['svc-tab-3', 'Corporate tax & year-end'],
+    books: ['svc-tab-4', 'Bookkeeping'],
+    payroll: ['svc-tab-5', 'Payroll'],
+    setup: ['svc-tab-6', 'Business set-up & incorporation'],
+    planning: ['svc-tab-7', 'Tax planning'],
+    cra: ['svc-tab-8', 'CRA support & catch-up filing'],
+    cfo: ['svc-tab-9', 'Advisory & fractional CFO']
+  };
+
   var PERSONAS = {
     employee: {
       type: 'T1 · Employee',
       handle: 'Your T1 return, RRSP and credits, and a benefits check',
-      pkg: 'Personal · Basic', price: 'from $89', ptype: 'personal',
+      services: ['personal', 'planning'], ptype: 'personal',
       rows: [
         ['Employment income (T4)', 72400],
         ['RRSP deduction', -6000],
@@ -74,7 +86,7 @@
     selfemployed: {
       type: 'T1 + T2125 · Self-employed',
       handle: 'Your T1 and T2125, GST/HST filings, and an instalment plan',
-      pkg: 'Personal · Comprehensive', price: 'from $349', ptype: 'personal',
+      services: ['selfemp', 'books', 'planning'], ptype: 'business',
       rows: [
         ['Gross sales', 96000],
         ['Business expenses', -31500],
@@ -87,7 +99,7 @@
     owner: {
       type: 'T2 · Corporation (CCPC)',
       handle: 'Bookkeeping, payroll, your T2 return, and salary vs. dividend planning',
-      pkg: 'Business · Controller', price: '$799/month', ptype: 'business',
+      services: ['corp', 'books', 'payroll'], ptype: 'business',
       rows: [
         ['Revenue', 480000],
         ['Operating expenses', -318000],
@@ -100,7 +112,7 @@
     newcomer: {
       type: 'T1 · Newcomer, part-year resident',
       handle: 'Your first Canadian return, part-year residency, and benefit applications',
-      pkg: 'Personal · Standard', price: 'from $179', ptype: 'personal',
+      services: ['personal'], ptype: 'personal',
       rows: [
         ['Canadian employment income (Sep–Dec)', 18600],
         ['Income before arriving in Canada', 'Reported, not taxed'],
@@ -152,14 +164,28 @@
     el.classList.add('swap');
   }
 
+  function renderServiceLinks(container, keys) {
+    container.textContent = '';
+    keys.forEach(function (k) {
+      var a = document.createElement('a');
+      a.href = '#services';
+      a.className = 'svc-link';
+      a.setAttribute('data-svc', SVC[k][0]);
+      a.textContent = SVC[k][1];
+      container.appendChild(a);
+    });
+    container.classList.remove('swap');
+    void container.offsetWidth;
+    container.classList.add('swap');
+  }
+
   $$('input[name="persona"]').forEach(function (radio) {
     radio.addEventListener('change', function () {
       var p = PERSONAS[radio.value];
       swapText($('#pr-handle'), p.handle);
-      swapText($('#pr-package'), p.pkg);
-      swapText($('#pr-price'), p.price);
+      renderServiceLinks($('#pr-services'), p.services);
       var cta = $('#hero-cta');
-      cta.setAttribute('data-plan', p.pkg);
+      cta.setAttribute('data-plan', SVC[p.services[0]][1]);
       cta.setAttribute('data-type', p.ptype);
       renderLedger(p);
     });
@@ -187,7 +213,7 @@
     counters.forEach(function (c) { countObs.observe(c); });
   }
 
-  // ---------- Tabs (services, pricing, checklist) ----------
+  // ---------- Tabs (services, checklist) ----------
   function selectTab(tab, focus) {
     var list = tab.closest('[role="tablist"]');
     var tabs = $$('[role="tab"]', list);
@@ -216,6 +242,14 @@
     });
   });
 
+  // Service links (hero, Who we help) open the matching service
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('[data-svc]');
+    if (!link) return;
+    var tab = document.getElementById(link.getAttribute('data-svc'));
+    if (tab) selectTab(tab);
+  });
+
   // ---------- How it works: draw the timeline once it scrolls into view ----------
   var timeline = $('#timeline');
   if (timeline && !reduceMotion && 'IntersectionObserver' in window) {
@@ -230,81 +264,6 @@
       }, { threshold: 0.4 });
       tlObs.observe(timeline);
     }
-  }
-
-  // ---------- Pricing: couple toggle ----------
-  function setAmount(el, text) {
-    if (el.textContent === text) return;
-    el.textContent = text;
-    if (!reduceMotion) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
-  }
-
-  var couple = $('#couple');
-  if (couple) {
-    couple.addEventListener('change', function () {
-      var key = couple.checked ? 'data-couple' : 'data-single';
-      $$('#panel-personal [data-single]').forEach(function (el) {
-        var v = el.getAttribute(key);
-        if (el.classList.contains('amount')) setAmount(el, (+v).toLocaleString('en-CA'));
-        else el.textContent = v;
-      });
-    });
-  }
-
-  // ---------- Pricing: business estimator ----------
-  var tx = $('#tx');
-  var emp = $('#emp');
-
-  function extraBlocks(n, included) { return Math.max(0, Math.ceil((n - included) / 100)); }
-
-  function bizEstimate(t, e) {
-    var accVol = extraBlocks(t, 100) * 60;
-    var accPay = e > 0 ? 45 + e * 12 : 0;
-    var ctrlVol = extraBlocks(t, 300) * 50;
-    var ctrlPay = Math.max(0, e - 15) * 10;
-    var best = (e <= 3 && t <= 200) ? 'accountant' : (e <= 15 && t <= 400 ? 'controller' : 'cfo');
-    function parts(base, vol, pay, incl) {
-      var bits = [];
-      if (vol) bits.push('$' + vol + ' extra volume');
-      if (pay) bits.push('$' + pay + ' payroll');
-      return bits.length ? 'Base $' + base.toLocaleString('en-CA') + ' + ' + bits.join(' + ') : 'Base fee, includes ' + incl;
-    }
-    return {
-      best: best,
-      accountant: { price: 299 + accVol + accPay, note: parts(299, accVol, accPay, '100 transactions') },
-      controller: { price: 799 + ctrlVol + ctrlPay, note: parts(799, ctrlVol, ctrlPay, '300 transactions and 15 employees') },
-      cfo: { price: 1999, note: 'Base fee, includes 600 transactions and 30 employees' }
-    };
-  }
-
-  function paintRange(input) {
-    var pct = (input.value - input.min) / (input.max - input.min) * 100;
-    input.style.setProperty('--fill', pct + '%');
-  }
-
-  function updateBiz() {
-    var t = +tx.value;
-    var e = +emp.value;
-    $('#tx-out').textContent = t === +tx.max ? t + '+' : t;
-    $('#emp-out').textContent = e === +emp.max ? e + '+' : e;
-    paintRange(tx);
-    paintRange(emp);
-    var est = bizEstimate(t, e);
-    $$('#panel-business [data-tier]').forEach(function (card) {
-      var tier = card.getAttribute('data-tier');
-      setAmount($('[data-price]', card), est[tier].price.toLocaleString('en-CA'));
-      $('[data-breakdown]', card).textContent = est[tier].note;
-      card.classList.toggle('is-fit', tier === est.best);
-      var btn = $('[data-plan]', card);
-      btn.classList.toggle('btn-primary', tier === est.best);
-      btn.classList.toggle('btn-outline', tier !== est.best);
-    });
-  }
-
-  if (tx && emp) {
-    tx.addEventListener('input', updateBiz);
-    emp.addEventListener('input', updateBiz);
-    updateBiz();
   }
 
   // ---------- CRA deadlines: countdown, past and next ----------
@@ -405,11 +364,6 @@
   var current = 1;
   var chosenPlan = '';
 
-  var PACKAGES = {
-    personal: { Basic: '$89', Standard: '$179', Comprehensive: 'from $349' },
-    business: { Accountant: '$299/month', Controller: '$799/month', CFO: 'from $1,999/month' }
-  };
-
   function clientType() {
     var r = $('input[name="clientType"]:checked', form);
     return r ? r.value : '';
@@ -417,35 +371,26 @@
   function checked(name) {
     return $$('input[name="' + name + '"]:checked', form).map(function (c) { return c.value; });
   }
-  function suggestPersonal() {
-    var p = checked('personal');
-    if (!p.length) return '';
-    var complex = ['rental', 'selfemployed', 'sold', 'foreign'].filter(function (v) { return p.indexOf(v) > -1; });
-    if (p.indexOf('selfemployed') > -1 || complex.length >= 2) return 'Comprehensive';
-    if (complex.length === 1 || p.indexOf('investments') > -1 || p.indexOf('newcomer') > -1) return 'Standard';
-    return 'Basic';
-  }
-  function suggestBusiness() {
-    var b = checked('business');
-    if (!b.length) return '';
-    if (b.indexOf('cfo') > -1) return 'CFO';
-    if (b.indexOf('payroll') > -1 || (b.indexOf('corp') > -1 && b.indexOf('books') > -1)) return 'Controller';
-    return 'Accountant';
-  }
+  var OPTION_SERVICES = {
+    employment: ['personal'], investments: ['personal', 'planning'], student: ['personal'], newcomer: ['personal'],
+    rental: ['personal', 'planning'], selfemployed: ['selfemp'], sold: ['personal', 'planning'], behind: ['cra'],
+    soleprop: ['selfemp'], corp: ['corp'], planning: ['setup'], books: ['books'], gst: ['selfemp'],
+    payroll: ['payroll'], cfo: ['cfo'], cra: ['cra']
+  };
   function suggestion() {
     var type = clientType();
-    var out = [];
-    if (type === 'personal' || type === 'both') {
-      var p = suggestPersonal();
-      if (p) out.push('Personal · ' + p + ' (' + PACKAGES.personal[p] + ')');
-    }
-    if (type === 'business' || type === 'both') {
-      var b = suggestBusiness();
-      if (b) out.push('Business · ' + b + ' (' + PACKAGES.business[b] + ')');
-    }
-    return out.join(' + ');
+    var picks = [];
+    if (type === 'personal' || type === 'both') picks = picks.concat(checked('personal'));
+    if (type === 'business' || type === 'both') picks = picks.concat(checked('business'));
+    var keys = [];
+    picks.forEach(function (v) {
+      (OPTION_SERVICES[v] || []).forEach(function (k) { if (keys.indexOf(k) === -1) keys.push(k); });
+    });
+    var order = Object.keys(SVC);
+    keys.sort(function (a, b) { return order.indexOf(a) - order.indexOf(b); });
+    return keys.map(function (k) { return SVC[k][1]; }).join(' · ');
   }
-  function updateFit() { fitResult.textContent = suggestion() || 'Select what applies to see a suggestion'; }
+  function updateFit() { fitResult.textContent = suggestion() || 'Select what applies to see the matching services'; }
   function updateGroups() {
     var type = clientType();
     $$('.check-group', form).forEach(function (g) {
@@ -547,11 +492,11 @@
       if (!validateStep(3)) return;
       // No backend: show a confirmation instead of sending data.
       var firstName = form.elements.name.value.trim().split(/\s+/)[0];
-      var pkg = chosenPlan || suggestion();
+      var services = suggestion() || chosenPlan;
       $('#success-title').textContent = 'Thanks, ' + firstName + '!';
       $('#success-text').textContent =
-        'We received your request' + (pkg ? ' for ' + pkg : '') + '. We\'ll email ' +
-        form.elements.email.value.trim() + ' within one business day to schedule your free call.';
+        'We received your request' + (services ? ' about ' + services : '') + '. We\u2019ll email ' +
+        form.elements.email.value.trim() + ' to schedule your call.';
       form.hidden = true;
       success.hidden = false;
       success.focus();
@@ -577,11 +522,11 @@
       if (!btn) return;
       chosenPlan = btn.getAttribute('data-plan');
       var type = btn.getAttribute('data-type');
-      var radio = $('input[name="clientType"][value="' + type + '"]', form);
+      var radio = type ? $('input[name="clientType"][value="' + type + '"]', form) : null;
       if (radio) radio.checked = true;
       setError('clientType-error', '');
       updateGroups();
-      planNote.textContent = 'You chose ' + chosenPlan + '. We\'ll confirm the right fit on your call.';
+      planNote.textContent = 'You\u2019re asking about: ' + chosenPlan + '.';
       planNote.hidden = false;
       if (!form.hidden) showStep(clientType() ? 2 : 1);
     });
