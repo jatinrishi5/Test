@@ -22,9 +22,9 @@ Then visit <http://localhost:8000>.
 | --- | --- |
 | Top bar & header | Phone, email and client-portal link; sticky header with section highlighting; mobile menu |
 | Hero | "I'm…" switcher (employee, self-employed, business owner, newcomer) that updates an example client file and links to matching services |
+| Software we work with | Short band under the hero with a horizontally scrolling strip of official logos (QuickBooks, Xero, Sage, Wave, FreshBooks, Dext, Hubdoc, Wagepoint, TaxCycle); pauses on hover, static with reduced motion |
 | Services | Nine services in an explorer: personal tax, self-employed & small business tax, corporate tax & year-end, bookkeeping, payroll, business set-up, tax planning, CRA support, advisory |
 | Who we help | Six client situations, each linking to the services that fit |
-| Software we work with | Official logos grouped by use: accounting (QuickBooks, Xero, Sage, Wave, FreshBooks), receipts (Dext, Hubdoc), payroll (Wagepoint), tax (TaxCycle) |
 | How it works | Four-step process |
 | Tax Centre | CRA deadline countdown for the 2026 tax year and a personal/business document checklist |
 | About & founder | Firm values and Jatin Rishi's founder profile |
