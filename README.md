@@ -24,6 +24,7 @@ Then visit <http://localhost:8000>.
 | Hero | "I'm…" switcher (employee, self-employed, business owner, newcomer) that updates an example client file and links to matching services |
 | Services | Nine services in an explorer: personal tax, self-employed & small business tax, corporate tax & year-end, bookkeeping, payroll, business set-up, tax planning, CRA support, advisory |
 | Who we help | Six client situations, each linking to the services that fit |
+| Software we work with | Official logos grouped by use: accounting (QuickBooks, Xero, Sage, Wave, FreshBooks), receipts (Dext, Hubdoc), payroll (Wagepoint), tax (TaxCycle) |
 | How it works | Four-step process |
 | Tax Centre | CRA deadline countdown for the 2026 tax year and a personal/business document checklist |
 | About & founder | Firm values and Jatin Rishi's founder profile |
@@ -39,7 +40,7 @@ There is intentionally no pricing on the site.
 index.html      All page sections
 css/styles.css  Styles and responsive layout
 js/main.js      Menu, hero switcher, service explorer, accordion, deadlines, checklist, intake form, newsletter
-images/         Founder photo goes here (images/jatin-rishi.jpg)
+images/         Founder photo (images/jatin-rishi.jpg) and software logos (images/logos/)
 ```
 
 ## Before going live
