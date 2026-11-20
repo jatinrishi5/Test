@@ -1,6 +1,6 @@
-# NorthStarCPA — website
+# JRishiCPAs — website
 
-A responsive marketing website for **NorthStarCPA**, an online Canadian CPA firm. It is a static site with plain HTML, CSS and a little vanilla JavaScript: no build step and no dependencies apart from Google Fonts.
+A responsive website for **JRishiCPAs**, an online Canadian tax and accounting firm founded by Jatin Rishi. It is a static site with plain HTML, CSS and a little vanilla JavaScript: no build step and no dependencies apart from Google Fonts.
 
 Live site (GitHub Pages): <https://jatinrishi5.github.io/Test/>
 
@@ -20,33 +20,33 @@ Then visit <http://localhost:8000>.
 
 | Section | Notes |
 | --- | --- |
-| Top bar & header | Phone, email and client-portal link on every screen; sticky header; mobile menu |
-| Hero | Personal vs. business shortcuts, credibility stats |
-| Services | Five services: personal tax, small business & corporate tax, bookkeeping & payroll, business set-up, advisory/CFO |
+| Top bar & header | Phone, email and client-portal link; sticky header with section highlighting; mobile menu |
+| Hero | "I'm…" switcher (employee, self-employed, business owner, newcomer) that updates an example client file and links to matching services |
+| Services | Nine services in an explorer: personal tax, self-employed & small business tax, corporate tax & year-end, bookkeeping, payroll, business set-up, tax planning, CRA support, advisory |
+| Who we help | Six client situations, each linking to the services that fit |
 | How it works | Four-step process |
-| Pricing | Personal (Basic / Standard / Comprehensive) and Business (Accountant / Controller / CFO) tabs; "Choose" pre-fills the booking form |
-| Tax Centre | Key CRA deadlines for the 2026 tax year (next one highlighted automatically) and a personal/business document checklist |
-| About & team | Firm values and placeholder team profiles |
-| Reviews | Sample reviews (replace with verified Google reviews) |
-| FAQ | Accordion with Canadian answers |
-| Book a consultation | 3-step intake form with progress bar and a suggested package |
-| Newsletter | "The Ledger Minute" sign-up |
-| Mobile bar | Call / Book buttons fixed to the bottom on phones |
+| Tax Centre | CRA deadline countdown for the 2026 tax year and a personal/business document checklist |
+| About & founder | Firm values and Jatin Rishi's founder profile |
+| FAQ | Searchable accordion |
+| Book a consultation | 3-step intake form that lists the services to cover |
+| Newsletter | "The JRishiCPAs Brief" sign-up |
 
-The design decisions follow the "Website examples" research tab in *Future Accounting Firm.xlsx* (e.g. booking CTA everywhere, personal/business split, intake form with progress bar, deadlines and checklists, newsletter instead of a blog, short FAQ answers, compact footer).
+There is intentionally no pricing on the site.
 
 ## Structure
 
 ```
 index.html      All page sections
 css/styles.css  Styles and responsive layout
-js/main.js      Menu, tabs, accordion, deadlines, checklist, intake form, newsletter
+js/main.js      Menu, hero switcher, service explorer, accordion, deadlines, checklist, intake form, newsletter
+images/         Founder photo goes here (images/jatin-rishi.jpg)
 ```
 
 ## Before going live
 
-- The firm name, people, reviews, prices, address, phone and email are placeholders.
+- The address, phone number and email are placeholders.
 - The intake and newsletter forms validate in the browser only and do not send data. Connect them to a form service, CRM or Calendly booking link.
 - Point the "Client portal" links (`#portal`) at your practice-management portal.
 - Update the CRA deadline list each tax year (`data-date` attributes in `index.html`).
+- **Founder photo:** save the photo as `images/jatin-rishi.jpg` (square, at least 640×640px). Until that file exists the site shows a "JR" monogram.
 - Replace the designation/software text badges with official partner badges you are entitled to use.
