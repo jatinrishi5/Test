@@ -444,7 +444,7 @@
   // ---------- Cal.com booking calendar (shown after the form) ----------
   // Set CAL_LINK to your Cal.com "username/event-slug" to switch the calendar on.
   // While it is empty, visitors see the "we'll email you to schedule" message instead.
-  var CAL_LINK = '';
+  var CAL_LINK = 'jatin-rishi-vsny7x/free-20-minute-consultation';
   var calReady = false;
   function loadCal() {
     if (calReady) return;
