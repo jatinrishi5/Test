@@ -474,6 +474,24 @@
       hideEventTypeDetails: false,
       layout: 'month_view'
     });
+    // Hide our "Loading…" placeholder once the calendar is ready; offer the
+    // booking page as a fallback if it fails.
+    window.Cal.ns.consult('on', { action: 'linkReady', callback: function () { calLoaded(true); } });
+    window.Cal.ns.consult('on', { action: 'linkFailed', callback: function () { calLoaded(false); } });
+  }
+  var calTimer = null;
+  function calLoaded(ok) {
+    if (calTimer) { clearTimeout(calTimer); calTimer = null; }
+    var box = $('#cal-inline');
+    if (box) box.classList.remove('is-loading');
+    var fallback = $('#cal-fallback');
+    if (fallback && !ok) fallback.hidden = false;
+  }
+  // Puts the booking section into (or out of) its full-width scheduling layout.
+  function setScheduling(on) {
+    var grid = $('#book .contact-grid');
+    if (grid) grid.classList.toggle('is-scheduling', on);
+    $('#intake-success').classList.toggle('is-scheduling', on);
   }
   // Shows the calendar with the visitor's details pre-filled. Returns false when it's off.
   function showCalendar(payload, services) {
@@ -482,6 +500,12 @@
     loadCal();
     box.textContent = '';
     box.hidden = false;
+    box.classList.add('is-loading');
+    var fallback = $('#cal-fallback');
+    if (fallback) fallback.hidden = true;
+    if (calTimer) clearTimeout(calTimer);
+    calTimer = setTimeout(function () { calLoaded(false); }, 15000);
+    setScheduling(true);
     var notes = [services ? 'Services: ' + services : '', payload.phone ? 'Phone: ' + payload.phone : '', payload.message]
       .filter(Boolean).join('\n').slice(0, 1000);
     window.Cal.ns.consult('inline', {
@@ -604,7 +628,9 @@
         }
         form.hidden = true;
         success.hidden = false;
-        success.focus();
+        success.focus({ preventScroll: true });
+        // The layout changes when the calendar appears, so bring the card's top into view.
+        $('#book .intake-card').scrollIntoView({ block: 'start', behavior: 'smooth' });
       }).catch(function (err) {
         if (submitError) {
           submitError.textContent = (err && err.name !== 'AbortError' && err.message && err.message !== 'Request failed' && err.message !== 'Failed to fetch'
@@ -630,7 +656,11 @@
       updateGroups();
       showStep(1);
       var calBox = $('#cal-inline');
-      if (calBox) { calBox.hidden = true; calBox.textContent = ''; }
+      if (calBox) { calBox.hidden = true; calBox.textContent = ''; calBox.classList.remove('is-loading'); }
+      if (calTimer) { clearTimeout(calTimer); calTimer = null; }
+      var calFallback = $('#cal-fallback');
+      if (calFallback) calFallback.hidden = true;
+      setScheduling(false);
       success.hidden = true;
       form.hidden = false;
       $('.step-title', steps[0]).focus();
