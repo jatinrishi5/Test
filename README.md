@@ -44,7 +44,10 @@ The pages work locally, but form submissions need the Vercel Functions. To run t
 | `RESEND_API_KEY` | Resend API key with send-only permission (stored as a Sensitive variable) |
 | `NOTIFY_EMAIL` | Where alerts are sent |
 | `RESEND_FROM` | Sender for alerts, e.g. `JRishiCPAs Website <onboarding@resend.dev>` |
-| `CLIENT_FROM` | Sender for client confirmations on your verified domain, e.g. `JRishiCPAs <hello@yourdomain.ca>`. Confirmations are off until this is set |
+| `CLIENT_FROM` | Sender for client confirmations on your verified domain, e.g. `JRishiCPAs <hello@yourdomain.ca>`. Takes priority over Gmail once set |
+| `GMAIL_USER` | For the time being, client confirmations can go through Gmail: the Gmail address to send from |
+| `GMAIL_APP_PASSWORD` | A Google App Password for that account (Sensitive). Create at myaccount.google.com/apppasswords (needs 2-Step Verification) |
+| `GMAIL_FROM_NAME` | Display name for Gmail-sent confirmations (default `JRishiCPAs`) |
 
 Until a domain is verified in Resend, the `onboarding@resend.dev` sender can only deliver to the Resend account owner's address. After verifying your domain, set `RESEND_FROM` to an address on it (for example `JRishiCPAs <hello@yourdomain.ca>`); that also allows confirmation emails to clients and newsletters.
 

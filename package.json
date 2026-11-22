@@ -1,0 +1,8 @@
+{
+  "name": "jrishicpas-website",
+  "private": true,
+  "description": "JRishiCPAs website: static pages plus Vercel Functions in /api",
+  "dependencies": {
+    "nodemailer": "6.9.16"
+  }
+}

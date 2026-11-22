@@ -79,6 +79,35 @@ async function sendEmail({ from, to, subject, html, text, replyTo, label }) {
   }
 }
 
+// Send through Gmail (SMTP with an App Password). Used for client confirmations
+// until a domain is verified in Resend. Capped at 8 seconds.
+let gmailTransport = null;
+async function sendViaGmail({ to, subject, html, text, replyTo, label }) {
+  const user = process.env.GMAIL_USER;
+  const pass = (process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
+  if (!user || !pass) { console.warn(`${label} skipped: Gmail not configured`); return false; }
+  try {
+    if (!gmailTransport) {
+      const nodemailer = require('nodemailer');
+      gmailTransport = nodemailer.createTransport({
+        host: 'smtp.gmail.com', port: 465, secure: true, auth: { user, pass },
+        connectionTimeout: 5000, greetingTimeout: 5000, socketTimeout: 8000
+      });
+    }
+    const send = gmailTransport.sendMail({
+      from: { name: process.env.GMAIL_FROM_NAME || 'JRishiCPAs', address: user },
+      to, subject: oneLine(subject), html, text, replyTo: replyTo || undefined
+    });
+    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000));
+    await Promise.race([send, timeout]);
+    return true;
+  } catch (err) {
+    // err.code is e.g. EAUTH (bad App Password) or ETIMEDOUT; no personal data logged.
+    console.error(`${label} via Gmail failed`, err.code || err.message);
+    return false;
+  }
+}
+
 function shell(inner) {
   return '<!doctype html><html><body style="margin:0;background:#f4f1ea;font-family:Segoe UI,Helvetica,Arial,sans-serif">' +
     '<div style="max-width:600px;margin:0 auto;padding:24px 16px">' +
@@ -119,9 +148,13 @@ function safeFirstName(name) {
 }
 
 async function sendClientConfirmation(row) {
-  // Off until a sender on a domain verified in Resend is configured.
-  const from = process.env.CLIENT_FROM;
-  if (!from) return false;
+  // Sender, in order of preference:
+  //   1. CLIENT_FROM: an address on a domain verified in Resend (the long-term setup)
+  //   2. GMAIL_USER + GMAIL_APP_PASSWORD: send through Gmail for the time being
+  // With neither set, confirmations are off.
+  const resendFrom = process.env.CLIENT_FROM;
+  const viaGmail = !resendFrom && process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD;
+  if (!resendFrom && !viaGmail) return false;
 
   const first = safeFirstName(row.name);
   const situations = (row.situations || []).map((s) => SITUATION_LABELS[s]).filter(Boolean);
@@ -164,14 +197,14 @@ async function sendClientConfirmation(row) {
     'You\'re receiving this because a consultation was requested on our website with this address. Didn\'t request it? You can ignore this email.'
   ].join('\n');
 
-  return sendEmail({
-    from,
+  const message = {
     to: row.email,
     subject: 'We’ve received your consultation request – JRishiCPAs',
     html, text,
     replyTo: process.env.NOTIFY_EMAIL || undefined,
     label: 'client confirmation'
-  });
+  };
+  return resendFrom ? sendEmail({ from: resendFrom, ...message }) : sendViaGmail(message);
 }
 
 module.exports = { sendAlert, sendClientConfirmation, SITUATION_LABELS, TYPE_LABELS, torontoTime, oneLine };
