@@ -43,7 +43,8 @@ The pages work locally, but form submissions need the Vercel Functions. To run t
 | --- | --- |
 | `RESEND_API_KEY` | Resend API key with send-only permission (stored as a Sensitive variable) |
 | `NOTIFY_EMAIL` | Where alerts are sent |
-| `RESEND_FROM` | Sender, e.g. `JRishiCPAs Website <onboarding@resend.dev>` |
+| `RESEND_FROM` | Sender for alerts, e.g. `JRishiCPAs Website <onboarding@resend.dev>` |
+| `CLIENT_FROM` | Sender for client confirmations on your verified domain, e.g. `JRishiCPAs <hello@yourdomain.ca>`. Confirmations are off until this is set |
 
 Until a domain is verified in Resend, the `onboarding@resend.dev` sender can only deliver to the Resend account owner's address. After verifying your domain, set `RESEND_FROM` to an address on it (for example `JRishiCPAs <hello@yourdomain.ca>`); that also allows confirmation emails to clients and newsletters.
 

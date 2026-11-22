@@ -1,9 +1,7 @@
 // POST /api/consultation
 // Saves a free-consultation request from the booking form to Supabase.
 const { cors, send, clean, body, insert, EMAIL } = require('./_supabase');
-const { sendAlert, SITUATION_LABELS, torontoTime, oneLine } = require('./_notify');
-
-const TYPE_LABELS = { personal: 'Personal', business: 'Business', both: 'Personal and business' };
+const { sendAlert, sendClientConfirmation, SITUATION_LABELS, TYPE_LABELS, torontoTime, oneLine } = require('./_notify');
 
 const CLIENT_TYPES = ['personal', 'business', 'both'];
 const FAILED = 'We couldn’t save your request just now. Please email us instead.';
@@ -49,8 +47,9 @@ module.exports = async (req, res) => {
       return send(res, 502, { error: FAILED });
     }
 
-    // Saved. Now alert the firm (best effort, capped at a few seconds).
-    await sendAlert({
+    // Saved. Now alert the firm and confirm to the client, in parallel
+    // (best effort, each capped at a few seconds).
+    await Promise.all([sendClientConfirmation(row), sendAlert({
       subject: `New consultation request from ${oneLine(row.name, 80)}`,
       title: 'New free-consultation request',
       replyTo: row.email,
@@ -66,7 +65,7 @@ module.exports = async (req, res) => {
         ['Submitted', `${torontoTime()} from ${row.source || 'the website'}`]
       ],
       footer: `Reply to this email to answer ${oneLine(row.name, 80)} directly.`
-    });
+    })]);
     return send(res, 201, { ok: true });
   } catch (err) {
     console.error('consultation handler error', err.message);
