@@ -925,3 +925,9 @@ h3 { letter-spacing: -.005em; }
 .hero .persona-options span:hover { border-color: var(--gold); }
 .hero .persona-options input:checked + span { background: var(--gold); border-color: var(--gold); color: var(--ink); }
 .hero .persona-result { border-left-color: var(--gold); }
+
+/* ---------- Form backend helpers ---------- */
+/* Hidden bot trap: off-screen for people, still filled in by spam bots */
+.hp { position: absolute !important; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+#submit-error a, #nl-error a { color: inherit; font-weight: 600; }
+button[type="submit"]:disabled { opacity: .7; cursor: progress; }

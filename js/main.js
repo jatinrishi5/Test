@@ -419,6 +419,27 @@
 
   var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   var phonePattern = /^[+()\-.\s\d]{7,20}$/;
+
+  // ---------- Backend (Vercel functions that save to Supabase) ----------
+  // On Vercel the API is same-origin. The GitHub Pages copy posts to the Vercel site.
+  var API_BASE = /\.github\.io$/.test(location.hostname) ? 'https://jrishicpas.vercel.app' : '';
+  var CONTACT_EMAIL = 'hello@example.com';
+  function postJSON(path, data) {
+    var ctrl = 'AbortController' in window ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 15000) : null;
+    return fetch(API_BASE + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (json) {
+        if (!r.ok || !json.ok) { var err = new Error(json.error || 'Request failed'); err.fields = json.fields; throw err; }
+        return json;
+      });
+    }).finally(function () { if (timer) clearTimeout(timer); });
+  }
+  function pageSource() { return location.origin + location.pathname; }
   var fieldRules = {
     name: function (v) {
       if (!v) return 'Please enter your name.';
@@ -493,16 +514,53 @@
         return;
       }
       if (!validateStep(3)) return;
-      // No backend: show a confirmation instead of sending data.
+      var submitBtn = $('button[type="submit"]', form);
+      var submitError = $('#submit-error');
+      if (submitBtn.disabled) return;
       var firstName = form.elements.name.value.trim().split(/\s+/)[0];
       var services = suggestion() || chosenPlan;
-      $('#success-title').textContent = 'Thanks, ' + firstName + '!';
-      $('#success-text').textContent =
-        'We received your request' + (services ? ' about ' + services : '') + '. We\u2019ll email ' +
-        form.elements.email.value.trim() + ' to schedule your call.';
-      form.hidden = true;
-      success.hidden = false;
-      success.focus();
+      var type = clientType();
+      var situations = [];
+      if (type === 'personal' || type === 'both') situations = situations.concat(checked('personal'));
+      if (type === 'business' || type === 'both') situations = situations.concat(checked('business'));
+      var payload = {
+        clientType: type,
+        situations: situations,
+        services: services,
+        name: form.elements.name.value.trim(),
+        email: form.elements.email.value.trim(),
+        phone: form.elements.phone.value.trim(),
+        province: form.elements.province.value,
+        message: form.elements.message.value.trim(),
+        company: form.elements.company ? form.elements.company.value : '',
+        source: pageSource()
+      };
+      var label = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending\u2026';
+      if (submitError) submitError.textContent = '';
+
+      postJSON('/api/consultation', payload).then(function () {
+        $('#success-title').textContent = 'Thanks, ' + firstName + '!';
+        $('#success-text').textContent =
+          'We received your request' + (services ? ' about ' + services : '') + '. We\u2019ll email ' +
+          payload.email + ' to schedule your call.';
+        form.hidden = true;
+        success.hidden = false;
+        success.focus();
+      }).catch(function (err) {
+        if (submitError) {
+          submitError.textContent = (err && err.name !== 'AbortError' && err.message && err.message !== 'Request failed' && err.message !== 'Failed to fetch'
+            ? err.message : 'We couldn\u2019t send your request just now.') + ' ';
+          var a = document.createElement('a');
+          a.href = 'mailto:' + CONTACT_EMAIL + '?subject=' + encodeURIComponent('Consultation request: ' + payload.name);
+          a.textContent = 'Email us instead';
+          submitError.appendChild(a);
+        }
+      }).finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = label;
+      });
     });
 
     $('#intake-reset').addEventListener('click', function () {
@@ -549,9 +607,23 @@
       setError('nl-error', msg);
       nlInput.setAttribute('aria-invalid', msg ? 'true' : 'false');
       if (msg) { nlInput.focus(); return; }
-      nl.reset();
-      nlInput.removeAttribute('aria-invalid');
-      $('#nl-success').hidden = false;
+      var nlBtn = $('button[type="submit"]', nl);
+      if (nlBtn.disabled) return;
+      var nlLabel = nlBtn.textContent;
+      nlBtn.disabled = true;
+      nlBtn.textContent = 'Subscribing…';
+      var hp = $('#nl-company');
+      postJSON('/api/subscribe', { email: v, company: hp ? hp.value : '', source: pageSource() }).then(function () {
+        nl.reset();
+        nlInput.removeAttribute('aria-invalid');
+        $('#nl-success').hidden = false;
+      }).catch(function (err) {
+        setError('nl-error', err && err.message && err.message !== 'Request failed' && err.message !== 'Failed to fetch'
+          ? err.message : 'We couldn’t subscribe you just now. Please try again later.');
+      }).finally(function () {
+        nlBtn.disabled = false;
+        nlBtn.textContent = nlLabel;
+      });
     });
   }
 

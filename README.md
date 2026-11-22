@@ -1,8 +1,9 @@
 # JRishiCPAs — website
 
-A responsive website for **JRishiCPAs**, an online Canadian tax and accounting firm founded by Jatin Rishi. It is a static site with plain HTML, CSS and a little vanilla JavaScript: no build step and no dependencies apart from Google Fonts.
+A responsive website for **JRishiCPAs**, an online Canadian tax and accounting firm founded by Jatin Rishi. The front end is plain HTML, CSS and a little vanilla JavaScript (no build step). Form submissions are saved by two small Vercel Functions into a Supabase (Postgres) database.
 
-Live site (GitHub Pages): <https://jatinrishi5.github.io/Test/>
+- **Main site (Vercel):** <https://jrishicpas.vercel.app>
+- GitHub Pages copy: <https://jatinrishi5.github.io/Test/> (its forms post to the Vercel API)
 
 ## Viewing the site
 
@@ -12,9 +13,31 @@ Live site (GitHub Pages): <https://jatinrishi5.github.io/Test/>
 python3 -m http.server 8000
 ```
 
-Then visit <http://localhost:8000>.
+The pages work locally, but form submissions need the Vercel Functions. To run those locally use the Vercel CLI (`vercel dev`) with the environment variables below.
 
-**GitHub Pages:** the site is published from the `main` branch, `/ (root)` folder (Settings → Pages). Anything merged into `main` is republished automatically.
+**Vercel:** the project `jrishicpas` is linked to this repository. Every push to `main` deploys to production; other branches and pull requests get preview deployments.
+
+**GitHub Pages:** also published from `main`, `/ (root)`.
+
+## Backend
+
+| Piece | What it does |
+| --- | --- |
+| `api/consultation.js` | `POST /api/consultation`: validates a booking-form request and inserts it into `consultation_requests` |
+| `api/subscribe.js` | `POST /api/subscribe`: adds an email to `newsletter_subscribers` (duplicates count as success) |
+| `api/_supabase.js` | Shared helpers: CORS for the GitHub Pages copy, input cleaning, and the Supabase REST insert |
+| Supabase project `jrishicpas` | Region `ca-central-1`. Tables `consultation_requests` and `newsletter_subscribers` |
+
+**Security.** Row Level Security is on for both tables. The publishable key used by the functions may only `INSERT`; it cannot read, update or delete rows. Both forms include a hidden "honeypot" field that silently discards bot submissions, and the functions never log visitors' personal details.
+
+**Environment variables** (set in Vercel → Project → Settings → Environment Variables):
+
+| Name | Value |
+| --- | --- |
+| `SUPABASE_URL` | The Supabase project API URL |
+| `SUPABASE_PUBLISHABLE_KEY` | The Supabase publishable key (`sb_publishable_…`) |
+
+**Reading submissions.** Open the Supabase dashboard → Table Editor → `consultation_requests` (or `newsletter_subscribers`). Use the `status` column (`new`, `contacted`, `closed`) to track follow-ups.
 
 ## What's on the page
 
@@ -22,32 +45,30 @@ Then visit <http://localhost:8000>.
 | --- | --- |
 | Top bar & header | Phone, email and client-portal link; sticky header with section highlighting; mobile menu |
 | Hero | "I'm…" switcher (employee, self-employed, business owner, newcomer) that updates an example client file and links to matching services |
-| Software we work with | Short band under the hero with a horizontally scrolling strip of official logos (QuickBooks, Xero, Sage, Wave, FreshBooks, Dext, Hubdoc, Wagepoint, TaxCycle); pauses on hover, static with reduced motion |
-| Services | Nine services in an explorer: personal tax, self-employed & small business tax, corporate tax & year-end, bookkeeping, payroll, business set-up, tax planning, CRA support, advisory |
+| Software we work with | Scrolling strip of accounting-software logos; pauses on hover, static with reduced motion |
+| Services | Nine services in an explorer |
 | Who we help | Six client situations, each linking to the services that fit |
 | How it works | Four-step process |
 | Tax Centre | CRA deadline countdown for the 2026 tax year and a personal/business document checklist |
 | About & founder | Firm values and Jatin Rishi's founder profile |
 | FAQ | Searchable accordion |
-| Book a consultation | 3-step intake form that lists the services to cover |
-| Newsletter | "The JRishiCPAs Brief" sign-up |
-
-There is intentionally no pricing on the site.
+| Book a consultation | 3-step intake form, saved to Supabase |
+| Newsletter | "The JRishiCPAs Brief" sign-up, saved to Supabase |
 
 ## Structure
 
 ```
 index.html      All page sections
 css/styles.css  Styles and responsive layout
-js/main.js      Menu, hero switcher, service explorer, accordion, deadlines, checklist, intake form, newsletter
-images/         Founder photo (images/jatin-rishi.jpg) and software logos (images/logos/)
+js/main.js      Menu, hero switcher, service explorer, accordion, deadlines, checklist, forms
+api/            Vercel Functions for the forms
+vercel.json     Security headers
+images/         Founder photo and software logos
 ```
 
 ## Before going live
 
-- The address, phone number and email are placeholders.
-- The intake and newsletter forms validate in the browser only and do not send data. Connect them to a form service, CRM or Calendly booking link.
+- The address, phone number and email are placeholders (also `CONTACT_EMAIL` in `js/main.js`, used for the "Email us instead" fallback).
+- New submissions are stored but no email notification is sent yet. Add one (for example a Supabase Database Webhook or an email service called from the functions) if you want to be alerted.
 - Point the "Client portal" links (`#portal`) at your practice-management portal.
 - Update the CRA deadline list each tax year (`data-date` attributes in `index.html`).
-- **Founder photo:** save the photo as `images/jatin-rishi.jpg` (square, at least 640×640px). Until that file exists the site shows a "JR" monogram.
-- Replace the designation/software text badges with official partner badges you are entitled to use.
