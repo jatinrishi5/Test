@@ -160,18 +160,26 @@ async function sendClientConfirmation(row) {
   const situations = (row.situations || []).map((s) => SITUATION_LABELS[s]).filter(Boolean);
   const type = TYPE_LABELS[row.client_type] || '';
   const site = SITE_URL();
+  // When self-scheduling is on (BOOKING_URL = the Cal.com booking page), say so
+  // and offer a button for anyone who closed the page before picking a time.
+  const bookingUrl = /^https:\/\//.test(process.env.BOOKING_URL || '') ? process.env.BOOKING_URL : '';
+  const intro = bookingUrl
+    ? 'Thank you for booking a free 20-minute consultation with JRishiCPAs. Your request has reached us. If you picked a time, your calendar invitation is on its way. If not, you can choose one anytime:'
+    : 'Thank you for booking a free 20-minute consultation with JRishiCPAs. Your request has reached us, and we’ll email you shortly to arrange a time for your call.';
+  const step1 = bookingUrl ? 'Pick a time for your call, if you haven’t already.' : 'We’ll email you to arrange a time that suits you.';
 
   const told = [type ? `Who it’s for: ${type}` : '', ...situations].filter(Boolean);
   const html = shell(
     `<h1 style="margin:0 0 12px;font-family:Georgia,serif;font-weight:500;font-size:24px;color:#101a30">Thanks${first ? ', ' + esc(first) : ''}! We’ve got your request.</h1>` +
-    '<p style="margin:0 0 14px">Thank you for booking a free 20-minute consultation with JRishiCPAs. Your request has reached us, and we’ll email you shortly to arrange a time for your call.</p>' +
+    `<p style="margin:0 0 14px">${esc(intro)}</p>` +
+    (bookingUrl ? `<p style="margin:0 0 16px"><a href="${esc(bookingUrl)}" style="display:inline-block;background:#101a30;color:#ffffff;text-decoration:none;font-weight:600;padding:11px 18px;border-radius:6px">Choose a time</a></p>` : '') +
     (told.length
       ? '<p style="margin:18px 0 6px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7d5f2e;font-weight:600">What you told us</p>' +
         `<ul style="margin:0 0 6px;padding-left:20px">${told.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`
       : '') +
     '<p style="margin:18px 0 6px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7d5f2e;font-weight:600">What happens next</p>' +
     '<ol style="margin:0 0 14px;padding-left:20px">' +
-    '<li>We’ll email you to arrange a time that suits you.</li>' +
+    `<li>${esc(step1)}</li>` +
     '<li>Your free 20-minute call, by phone or video.</li>' +
     '<li>We’ll confirm which services fit and the next steps.</li>' +
     '</ol>' +
@@ -183,11 +191,12 @@ async function sendClientConfirmation(row) {
   const text = [
     `Thanks${first ? ', ' + first : ''}! We've got your request.`,
     '',
-    'Thank you for booking a free 20-minute consultation with JRishiCPAs. Your request has reached us, and we\'ll email you shortly to arrange a time for your call.',
+    intro,
+    ...(bookingUrl ? [bookingUrl] : []),
     ...(told.length ? ['', 'What you told us:', ...told.map((t) => `- ${t}`)] : []),
     '',
     'What happens next:',
-    '1. We\'ll email you to arrange a time that suits you.',
+    `1. ${step1}`,
     '2. Your free 20-minute call, by phone or video.',
     '3. We\'ll confirm which services fit and the next steps.',
     '',

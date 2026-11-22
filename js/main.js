@@ -440,6 +440,57 @@
     }).finally(function () { if (timer) clearTimeout(timer); });
   }
   function pageSource() { return location.origin + location.pathname; }
+
+  // ---------- Cal.com booking calendar (shown after the form) ----------
+  // Set CAL_LINK to your Cal.com "username/event-slug" to switch the calendar on.
+  // While it is empty, visitors see the "we'll email you to schedule" message instead.
+  var CAL_LINK = '';
+  var calReady = false;
+  function loadCal() {
+    if (calReady) return;
+    calReady = true;
+    // Cal.com's official embed loader
+    (function (C, A, L) {
+      var p = function (a, ar) { a.q.push(ar); };
+      var d = C.document;
+      C.Cal = C.Cal || function () {
+        var cal = C.Cal; var ar = arguments;
+        if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement('script')).src = A; cal.loaded = true; }
+        if (ar[0] === L) {
+          var api = function () { p(api, arguments); };
+          var namespace = ar[1];
+          api.q = api.q || [];
+          if (typeof namespace === 'string') { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ['initNamespace', namespace]); }
+          else p(cal, ar);
+          return;
+        }
+        p(cal, ar);
+      };
+    })(window, 'https://app.cal.com/embed/embed.js', 'init');
+    window.Cal('init', 'consult', { origin: 'https://app.cal.com' });
+    window.Cal.ns.consult('ui', {
+      theme: 'light',
+      cssVarsPerTheme: { light: { 'cal-brand': '#101a30' } },
+      hideEventTypeDetails: false,
+      layout: 'month_view'
+    });
+  }
+  // Shows the calendar with the visitor's details pre-filled. Returns false when it's off.
+  function showCalendar(payload, services) {
+    var box = $('#cal-inline');
+    if (!CAL_LINK || !box) return false;
+    loadCal();
+    box.textContent = '';
+    box.hidden = false;
+    var notes = [services ? 'Services: ' + services : '', payload.phone ? 'Phone: ' + payload.phone : '', payload.message]
+      .filter(Boolean).join('\n').slice(0, 1000);
+    window.Cal.ns.consult('inline', {
+      elementOrSelector: '#cal-inline',
+      calLink: CAL_LINK,
+      config: { layout: 'month_view', name: payload.name, email: payload.email, notes: notes }
+    });
+    return true;
+  }
   var fieldRules = {
     name: function (v) {
       if (!v) return 'Please enter your name.';
@@ -541,10 +592,16 @@
       if (submitError) submitError.textContent = '';
 
       postJSON('/api/consultation', payload).then(function () {
-        $('#success-title').textContent = 'Thanks, ' + firstName + '!';
-        $('#success-text').textContent =
-          'We received your request' + (services ? ' about ' + services : '') + '. We\u2019ll email ' +
-          payload.email + ' to schedule your call.';
+        if (showCalendar(payload, services)) {
+          $('#success-title').textContent = 'Thanks, ' + firstName + '! Now pick a time.';
+          $('#success-text').textContent =
+            'Choose a time for your free 20-minute call below. You\u2019ll get a calendar invitation at ' + payload.email + '.';
+        } else {
+          $('#success-title').textContent = 'Thanks, ' + firstName + '!';
+          $('#success-text').textContent =
+            'We received your request' + (services ? ' about ' + services : '') + '. We\u2019ll email ' +
+            payload.email + ' to schedule your call.';
+        }
         form.hidden = true;
         success.hidden = false;
         success.focus();
@@ -572,6 +629,8 @@
       $$('.error', form).forEach(function (el) { el.textContent = ''; });
       updateGroups();
       showStep(1);
+      var calBox = $('#cal-inline');
+      if (calBox) { calBox.hidden = true; calBox.textContent = ''; }
       success.hidden = true;
       form.hidden = false;
       $('.step-title', steps[0]).focus();

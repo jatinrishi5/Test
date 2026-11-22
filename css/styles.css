@@ -931,3 +931,7 @@ h3 { letter-spacing: -.005em; }
 .hp { position: absolute !important; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 #submit-error a, #nl-error a { color: inherit; font-weight: 600; }
 button[type="submit"]:disabled { opacity: .7; cursor: progress; }
+
+/* ---------- Cal.com booking calendar (after the form) ---------- */
+.cal-inline { width: 100%; min-height: 560px; margin: 1.25rem 0 1rem; text-align: left; overflow: auto; border-radius: var(--radius); }
+.form-success:has(.cal-inline:not([hidden])) { padding-top: 1rem; }

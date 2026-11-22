@@ -48,6 +48,7 @@ The pages work locally, but form submissions need the Vercel Functions. To run t
 | `GMAIL_USER` | For the time being, client confirmations can go through Gmail: the Gmail address to send from |
 | `GMAIL_APP_PASSWORD` | A Google App Password for that account (Sensitive). Create at myaccount.google.com/apppasswords (needs 2-Step Verification) |
 | `GMAIL_FROM_NAME` | Display name for Gmail-sent confirmations (default `JRishiCPAs`) |
+| `BOOKING_URL` | Your Cal.com booking page (e.g. `https://cal.com/you/free-consultation`). When set, the confirmation email offers a "Choose a time" button |
 
 Until a domain is verified in Resend, the `onboarding@resend.dev` sender can only deliver to the Resend account owner's address. After verifying your domain, set `RESEND_FROM` to an address on it (for example `JRishiCPAs <hello@yourdomain.ca>`); that also allows confirmation emails to clients and newsletters.
 
@@ -86,3 +87,10 @@ images/         Founder photo and software logos
 - Email alerts use Resend's test sender until you verify a domain in Resend (see Backend above).
 - Point the "Client portal" links (`#portal`) at your practice-management portal.
 - Update the CRA deadline list each tax year (`data-date` attributes in `index.html`).
+
+## Booking calendar (Cal.com)
+
+After the 3-step form is saved, a Cal.com calendar appears with the visitor's name, email and notes pre-filled, so they can pick a time. Cal.com adds the meeting to the connected Google Calendar and emails both sides an invitation.
+
+- Switch it on by setting `CAL_LINK` near the top of the backend section in `js/main.js` to your Cal.com `username/event-slug`. While it is empty, visitors see the "we'll email you to schedule" message instead.
+- Set `BOOKING_URL` in Vercel to the same booking page so the confirmation email links to it.
