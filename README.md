@@ -37,6 +37,16 @@ The pages work locally, but form submissions need the Vercel Functions. To run t
 | `SUPABASE_URL` | The Supabase project API URL |
 | `SUPABASE_PUBLISHABLE_KEY` | The Supabase publishable key (`sb_publishable_…`) |
 
+**Email alerts (Resend).** After a submission is saved, `api/_notify.js` emails an alert through [Resend](https://resend.com): every new booking (reply goes straight to the client) and every new newsletter subscriber (duplicates don't alert). Alerts are best effort and capped at 5 seconds, so a failed email never loses a saved submission.
+
+| Name | Value |
+| --- | --- |
+| `RESEND_API_KEY` | Resend API key with send-only permission (stored as a Sensitive variable) |
+| `NOTIFY_EMAIL` | Where alerts are sent |
+| `RESEND_FROM` | Sender, e.g. `JRishiCPAs Website <onboarding@resend.dev>` |
+
+Until a domain is verified in Resend, the `onboarding@resend.dev` sender can only deliver to the Resend account owner's address. After verifying your domain, set `RESEND_FROM` to an address on it (for example `JRishiCPAs <hello@yourdomain.ca>`); that also allows confirmation emails to clients and newsletters.
+
 **Reading submissions.** Open the Supabase dashboard → Table Editor → `consultation_requests` (or `newsletter_subscribers`). Use the `status` column (`new`, `contacted`, `closed`) to track follow-ups.
 
 ## What's on the page
@@ -69,6 +79,6 @@ images/         Founder photo and software logos
 ## Before going live
 
 - The address, phone number and email are placeholders (also `CONTACT_EMAIL` in `js/main.js`, used for the "Email us instead" fallback).
-- New submissions are stored but no email notification is sent yet. Add one (for example a Supabase Database Webhook or an email service called from the functions) if you want to be alerted.
+- Email alerts use Resend's test sender until you verify a domain in Resend (see Backend above).
 - Point the "Client portal" links (`#portal`) at your practice-management portal.
 - Update the CRA deadline list each tax year (`data-date` attributes in `index.html`).
