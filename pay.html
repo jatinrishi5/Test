@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Make a Payment | JRishiCPAs</title>
+  <meta name="description" content="Pay your JRishiCPAs invoice securely online. Payments are processed by Stripe.">
+  <meta name="robots" content="noindex">
+  <script>document.documentElement.className += ' js';</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101a30'/%3E%3Ctext x='16' y='21.5' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='14' fill='%23c5a46d'%3EJR%3C/text%3E%3C/svg%3E">
+</head>
+<body class="pay-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a href="index.html" class="logo" aria-label="JRishiCPAs home">
+        <span class="logo-mark" aria-hidden="true">JR</span>
+        <span class="logo-text">JRishi<span class="logo-cpa">CPAs</span></span>
+      </a>
+      <a href="index.html" class="btn btn-outline btn-sm" id="back-link"><span aria-hidden="true">←</span> Back to site</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="pay-hero">
+      <div class="container">
+        <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Secure online payment</p>
+        <h1>Make a payment</h1>
+        <p class="lead">Pay your JRishiCPAs invoice by card, Apple Pay or Google Pay. Confirm your details below, then complete payment on Stripe's secure checkout.</p>
+      </div>
+    </section>
+
+    <section class="pay-body">
+      <div class="container pay-grid">
+        <div class="pay-card" id="pay-card">
+          <!-- Preview banner: shown while no Stripe Payment Link is configured -->
+          <p class="pay-preview" id="pay-preview" hidden><strong>Preview mode.</strong> Stripe isn't connected yet, so no payment will be taken.</p>
+
+          <form id="pay-form" class="intake" novalidate
+                data-payment-link="">
+            <!--
+              To connect Stripe, paste your Stripe Payment Link between the quotes above, e.g.
+              data-payment-link="https://buy.stripe.com/xxxxxxxx"
+            -->
+            <div class="progress">
+              <div class="progress-meta"><span id="pay-step-label">Step 1 of 2</span><span id="pay-step-name">Your details</span></div>
+              <div class="progress-track" role="progressbar" aria-labelledby="pay-step-label" aria-valuemin="1" aria-valuemax="2" aria-valuenow="1"><span class="progress-fill" style="width:50%"></span></div>
+            </div>
+
+            <fieldset class="step" data-step="1" data-name="Your details">
+              <legend class="step-title" tabindex="-1">Verify your details</legend>
+              <p class="hint">These must match the details on your invoice or engagement letter.</p>
+
+              <div class="field">
+                <label for="pay-name">Full name <span class="req" aria-hidden="true">*</span></label>
+                <input id="pay-name" name="name" type="text" autocomplete="name" required aria-describedby="pay-name-error">
+                <p class="error" id="pay-name-error"></p>
+              </div>
+              <div class="field">
+                <label for="pay-email">Email <span class="req" aria-hidden="true">*</span></label>
+                <input id="pay-email" name="email" type="email" autocomplete="email" required aria-describedby="pay-email-help pay-email-error">
+                <p class="field-help" id="pay-email-help">Your payment receipt will be sent here.</p>
+                <p class="error" id="pay-email-error"></p>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="pay-phone">Phone number <span class="req" aria-hidden="true">*</span></label>
+                  <input id="pay-phone" name="phone" type="tel" autocomplete="tel" required aria-describedby="pay-phone-error">
+                  <p class="error" id="pay-phone-error"></p>
+                </div>
+                <div class="field">
+                  <label for="pay-client">Client ID <span class="req" aria-hidden="true">*</span></label>
+                  <input id="pay-client" name="clientId" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required placeholder="e.g. JR-1042" aria-describedby="pay-client-help pay-client-error">
+                  <p class="field-help" id="pay-client-help">Shown at the top of your invoice.</p>
+                  <p class="error" id="pay-client-error"></p>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="pay-invoice">Invoice number <span class="optional">(optional)</span></label>
+                  <input id="pay-invoice" name="invoice" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. INV-2026-031" aria-describedby="pay-invoice-error">
+                  <p class="error" id="pay-invoice-error"></p>
+                </div>
+                <div class="field">
+                  <label for="pay-for">Payment for <span class="optional">(optional)</span></label>
+                  <select id="pay-for" name="service">
+                    <option value="">Select a service</option>
+                    <option>Personal tax returns</option>
+                    <option>Self-employed &amp; small business tax</option>
+                    <option>Corporate tax &amp; year-end</option>
+                    <option>Bookkeeping</option>
+                    <option>Payroll</option>
+                    <option>Business set-up &amp; incorporation</option>
+                    <option>Tax planning</option>
+                    <option>CRA support &amp; catch-up filing</option>
+                    <option>Advisory &amp; fractional CFO</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field field-check">
+                <label><input type="checkbox" id="pay-confirm" name="confirm" aria-describedby="pay-confirm-error"> I confirm these details are correct and I'm authorized to pay this invoice.</label>
+                <p class="error" id="pay-confirm-error"></p>
+              </div>
+              <div class="step-actions">
+                <button type="button" class="btn btn-primary" data-pay-next>Review details <span class="arrow" aria-hidden="true">→</span></button>
+              </div>
+            </fieldset>
+
+            <fieldset class="step" data-step="2" data-name="Review" hidden>
+              <legend class="step-title" tabindex="-1">Review and pay</legend>
+              <dl class="pay-summary" id="pay-summary"></dl>
+              <p class="pay-next-note">On the next screen, Stripe will ask for the <strong>amount shown on your invoice</strong> and your payment details. Your email is filled in for you.</p>
+              <div class="step-actions">
+                <button type="button" class="btn btn-quiet" data-pay-back>Edit details</button>
+                <button type="submit" class="btn btn-primary" id="pay-submit">Continue to secure payment <span class="arrow" aria-hidden="true">→</span></button>
+              </div>
+            </fieldset>
+          </form>
+
+          <div class="form-success pay-success" id="pay-success" role="status" tabindex="-1" hidden>
+            <div class="success-icon" aria-hidden="true">✓</div>
+            <h2 id="pay-success-title">Payment received</h2>
+            <p id="pay-success-text">Thank you. Your payment was successful and a receipt has been emailed to you.</p>
+            <dl class="pay-summary" id="pay-success-summary" hidden></dl>
+            <a href="index.html" class="btn btn-outline" id="pay-home">Back to JRishiCPAs</a>
+          </div>
+        </div>
+
+        <aside class="pay-aside" aria-label="How payment works">
+          <div class="pay-aside-card">
+            <h2>How it works</h2>
+            <ol class="pay-steps">
+              <li><span class="pay-step-num" aria-hidden="true">1</span><div><strong>Verify your details</strong><span>Name, email, phone and Client ID, matched to your invoice.</span></div></li>
+              <li><span class="pay-step-num" aria-hidden="true">2</span><div><strong>Pay on Stripe</strong><span>Enter the invoice amount and pay by card, Apple Pay or Google Pay.</span></div></li>
+              <li><span class="pay-step-num" aria-hidden="true">3</span><div><strong>Get your receipt</strong><span>A payment confirmation is emailed to you right away.</span></div></li>
+            </ol>
+          </div>
+          <div class="pay-aside-card pay-secure">
+            <span class="pay-lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+            <div>
+              <h2>Your card details stay with Stripe</h2>
+              <p>Payments are processed by Stripe over an encrypted connection. JRishiCPAs never sees or stores your card number.</p>
+            </div>
+          </div>
+          <div class="pay-aside-card">
+            <h2>Need help?</h2>
+            <p>Can't find your Client ID or have a question about your invoice? Contact us before paying.</p>
+            <p class="pay-contact"><a href="tel:+15550100000">(555) 010-0000</a><br><a href="mailto:hello@example.com">hello@example.com</a></p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p>&copy; <span id="year">2026</span> JRishiCPAs. All rights reserved.</p>
+      <p>Payments processed securely by Stripe.</p>
+    </div>
+  </footer>
+
+  <script src="js/pay.js"></script>
+</body>
+</html>

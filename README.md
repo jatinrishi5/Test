@@ -94,3 +94,27 @@ After the 3-step form is saved, a Cal.com calendar appears with the visitor's na
 
 - Switch it on by setting `CAL_LINK` near the top of the backend section in `js/main.js` to your Cal.com `username/event-slug`. While it is empty, visitors see the "we'll email you to schedule" message instead.
 - Set `BOOKING_URL` in Vercel to the same booking page so the confirmation email links to it.
+
+## Online payments (`pay.html`)
+
+Clients pay invoices at `pay.html` ("Make a payment" in the top bar, mobile menu, footer and client-portal card).
+
+1. **Verify details.** Full name, email, phone and Client ID (required), invoice number and service (optional), and a confirmation checkbox, then a review step. Checked in the browser.
+2. **Pay on Stripe.** The page opens a **Stripe Payment Link** (Stripe-hosted checkout; card details never touch this site). The email is pre-filled and `client_reference_id` carries `CLIENTID__INVOICE__PHONE`, e.g. `JR-1042__INV-2026-031__4165550100`, so each payment in Stripe shows who paid and for which invoice. The client enters the invoice amount on Stripe.
+3. **Confirmation.** Stripe redirects back to `pay.html?status=success`. Stripe then calls `POST /api/stripe-webhook`, which verifies Stripe's signature and sends the client a JRishiCPAs **"Payment received"** email (amount, date, Client ID, invoice, reference) and the firm an alert with an "Open in Stripe" button. Pending payments (e.g. bank debits) are confirmed only once they clear.
+
+**Preview mode.** While `data-payment-link` on `#pay-form` in `pay.html` is empty, the page shows a "Preview mode" banner and simulates the payment step. No money is taken.
+
+| Name | Value |
+| --- | --- |
+| `STRIPE_WEBHOOK_SECRET` | Signing secret (`whsec_…`) of the Stripe webhook endpoint `https://jrishicpas.vercel.app/api/stripe-webhook`, listening for `checkout.session.completed` and `checkout.session.async_payment_succeeded`. Without it the endpoint refuses every request |
+
+Client confirmations use the same sender as booking confirmations (`CLIENT_FROM` or Gmail). No Stripe secret key is stored anywhere.
+
+**Going live**
+
+1. Finish activating the Stripe account (business details, website, support phone, identity, bank account).
+2. Create the Payment Link: product "Invoice payment", customer chooses the amount (CAD), after payment redirect to `https://jrishicpas.vercel.app/pay.html?status=success`.
+3. Create the webhook endpoint above and save its signing secret as `STRIPE_WEBHOOK_SECRET` in Vercel.
+4. Paste the Payment Link URL into `data-payment-link="…"` in `pay.html` and merge to `main`.
+
