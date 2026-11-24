@@ -256,7 +256,7 @@ async function sendPaymentConfirmation(p) {
       `<td style="padding:9px 12px;border-bottom:1px solid #ece6da;color:#1c2233;font-size:14px;font-weight:600">${esc(value)}</td></tr>`
     )).join('') +
     '</table>' +
-    '<p style="margin:0 0 14px">Keep this email for your records. Stripe, our payment processor, may also send you a separate card receipt.</p>' +
+    '<p style="margin:0 0 14px">Keep this email for your records.</p>' +
     '<p style="margin:0 0 14px">Questions about this payment or your invoice? Just reply to this email.</p>' +
     '<p style="margin:22px 0 0;padding-top:14px;border-top:1px solid #ece6da;color:#6b6e78;font-size:12.5px">' +
     `JRishiCPAs · Tax &amp; accounting, online across Canada · <a href="${esc(site)}" style="color:#7d5f2e">${esc(site.replace(/^https?:\/\//, ''))}</a><br>` +
@@ -269,7 +269,7 @@ async function sendPaymentConfirmation(p) {
     '',
     ...rows.map(([label, value]) => `${label}: ${value}`),
     '',
-    'Keep this email for your records. Stripe, our payment processor, may also send you a separate card receipt.',
+    'Keep this email for your records.',
     'Questions about this payment or your invoice? Just reply to this email.',
     '',
     `JRishiCPAs - Tax & accounting, online across Canada - ${site}`

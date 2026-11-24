@@ -37,7 +37,7 @@ function parseReference(ref) {
   const [clientId = '', invoice = '', phone = ''] = String(ref || '').split('__');
   const safe = (v, max) => (/^[A-Za-z0-9-]+$/.test(v) ? v.slice(0, max) : '');
   return {
-    clientId: safe(clientId, 20),
+    clientId: clientId === 'NOID' ? '' : safe(clientId, 20),
     invoice: invoice === 'NOINV' ? '' : safe(invoice, 30),
     phone: /^\d{7,15}$/.test(phone) ? phone : ''
   };

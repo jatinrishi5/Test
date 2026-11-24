@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Make a Payment | JRishiCPAs</title>
-  <meta name="description" content="Pay your JRishiCPAs invoice securely online. Payments are processed by Stripe.">
+  <meta name="description" content="Pay your JRishiCPAs invoice securely online.">
   <meta name="robots" content="noindex">
   <script>document.documentElement.className += ' js';</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,22 +31,18 @@
       <div class="container">
         <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Secure online payment</p>
         <h1>Make a payment</h1>
-        <p class="lead">Pay your JRishiCPAs invoice by card, Apple Pay or Google Pay. Confirm your details below, then complete payment on Stripe's secure checkout.</p>
+        <p class="lead">Pay your JRishiCPAs invoice by card, Apple Pay or Google Pay. Confirm your details below, then complete your payment on our secure checkout page.</p>
       </div>
     </section>
 
     <section class="pay-body">
       <div class="container pay-grid">
         <div class="pay-card" id="pay-card">
-          <!-- Preview banner: shown while no Stripe Payment Link is configured -->
-          <p class="pay-preview" id="pay-preview" hidden><strong>Preview mode.</strong> Stripe isn't connected yet, so no payment will be taken.</p>
+          <!-- Preview banner: shown while no payment link is configured -->
+          <p class="pay-preview" id="pay-preview" hidden><strong>Preview mode.</strong> Online payments aren't connected yet, so no payment will be taken.</p>
 
           <form id="pay-form" class="intake" novalidate
                 data-payment-link="">
-            <!--
-              To connect Stripe, paste your Stripe Payment Link between the quotes above, e.g.
-              data-payment-link="https://buy.stripe.com/xxxxxxxx"
-            -->
             <div class="progress">
               <div class="progress-meta"><span id="pay-step-label">Step 1 of 2</span><span id="pay-step-name">Your details</span></div>
               <div class="progress-track" role="progressbar" aria-labelledby="pay-step-label" aria-valuemin="1" aria-valuemax="2" aria-valuenow="1"><span class="progress-fill" style="width:50%"></span></div>
@@ -74,9 +70,9 @@
                   <p class="error" id="pay-phone-error"></p>
                 </div>
                 <div class="field">
-                  <label for="pay-client">Client ID <span class="req" aria-hidden="true">*</span></label>
-                  <input id="pay-client" name="clientId" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required placeholder="e.g. JR-1042" aria-describedby="pay-client-help pay-client-error">
-                  <p class="field-help" id="pay-client-help">Shown at the top of your invoice.</p>
+                  <label for="pay-client">Client ID <span class="optional">(optional)</span></label>
+                  <input id="pay-client" name="clientId" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. JR-1042" aria-describedby="pay-client-help pay-client-error">
+                  <p class="field-help" id="pay-client-help">Shown at the top of your invoice, if you have one.</p>
                   <p class="error" id="pay-client-error"></p>
                 </div>
               </div>
@@ -115,7 +111,7 @@
             <fieldset class="step" data-step="2" data-name="Review" hidden>
               <legend class="step-title" tabindex="-1">Review and pay</legend>
               <dl class="pay-summary" id="pay-summary"></dl>
-              <p class="pay-next-note">On the next screen, Stripe will ask for the <strong>amount shown on your invoice</strong> and your payment details. Your email is filled in for you.</p>
+              <p class="pay-next-note">On the next screen, you'll enter the <strong>amount shown on your invoice</strong> and your payment details. Your email is filled in for you.</p>
               <div class="step-actions">
                 <button type="button" class="btn btn-quiet" data-pay-back>Edit details</button>
                 <button type="submit" class="btn btn-primary" id="pay-submit">Continue to secure payment <span class="arrow" aria-hidden="true">→</span></button>
@@ -136,16 +132,16 @@
           <div class="pay-aside-card">
             <h2>How it works</h2>
             <ol class="pay-steps">
-              <li><span class="pay-step-num" aria-hidden="true">1</span><div><strong>Verify your details</strong><span>Name, email, phone and Client ID, matched to your invoice.</span></div></li>
-              <li><span class="pay-step-num" aria-hidden="true">2</span><div><strong>Pay on Stripe</strong><span>Enter the invoice amount and pay by card, Apple Pay or Google Pay.</span></div></li>
+              <li><span class="pay-step-num" aria-hidden="true">1</span><div><strong>Verify your details</strong><span>Name, email and phone, plus your Client ID if you have one.</span></div></li>
+              <li><span class="pay-step-num" aria-hidden="true">2</span><div><strong>Pay</strong><span>Enter the invoice amount and pay by card, Apple Pay or Google Pay.</span></div></li>
               <li><span class="pay-step-num" aria-hidden="true">3</span><div><strong>Get your receipt</strong><span>A payment confirmation is emailed to you right away.</span></div></li>
             </ol>
           </div>
           <div class="pay-aside-card pay-secure">
             <span class="pay-lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
             <div>
-              <h2>Your card details stay with Stripe</h2>
-              <p>Payments are processed by Stripe over an encrypted connection. JRishiCPAs never sees or stores your card number.</p>
+              <h2>Your payment information is secure</h2>
+              <p>Payments are handled by a PCI-compliant payment processor over an encrypted connection. JRishiCPAs never sees or stores your card number.</p>
             </div>
           </div>
           <div class="pay-aside-card">
@@ -161,7 +157,7 @@
   <footer class="site-footer">
     <div class="container footer-bottom">
       <p>&copy; <span id="year">2026</span> JRishiCPAs. All rights reserved.</p>
-      <p>Payments processed securely by Stripe.</p>
+      <p>Secure online payments.</p>
     </div>
   </footer>
 

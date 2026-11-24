@@ -8,11 +8,11 @@
   var success = $('#pay-success');
   if (!form) return;
 
-  // ---------- Stripe connection ----------
-  // Paste a Stripe Payment Link into data-payment-link on #pay-form to go live.
+  // ---------- Payment connection ----------
+  // Paste the payment link into data-payment-link on #pay-form to go live.
   // Without one the page runs in preview mode and no payment is taken.
   var paymentLink = (form.getAttribute('data-payment-link') || '').trim();
-  var isLive = /^https:\/\/(buy|checkout)\.stripe\.com\/[A-Za-z0-9_\-\/]+$/.test(paymentLink);
+  var isLive = /^https:\/\/[A-Za-z0-9.-]+\/[A-Za-z0-9_\-\/]+$/.test(paymentLink);
   var submitBtn = $('#pay-submit');
   if (!isLive) {
     $('#pay-preview').hidden = false;
@@ -49,8 +49,7 @@
       return '';
     },
     clientId: function (v) {
-      if (!v) return 'Please enter your Client ID.';
-      if (!clientPattern.test(v.toUpperCase())) return 'Client IDs are 3–20 letters, numbers or dashes, for example JR-1042.';
+      if (v && !clientPattern.test(v.toUpperCase())) return 'Client IDs are 3–20 letters, numbers or dashes, for example JR-1042.';
       return '';
     },
     invoice: function (v) {
@@ -151,10 +150,10 @@
 
   $('[data-pay-back]', form).addEventListener('click', function () { showStep(1); });
 
-  // Reference sent to Stripe: CLIENTID__INVOICE__PHONEDIGITS (letters, digits, dashes, underscores only)
+  // Reference sent to the payment processor: CLIENTID__INVOICE__PHONEDIGITS (letters, digits, dashes, underscores only)
   function reference(v) {
     var clean = function (s) { return s.replace(/[^A-Za-z0-9-]/g, ''); };
-    var parts = [clean(v.clientId), clean(v.invoice) || 'NOINV', digits(v.phone)];
+    var parts = [clean(v.clientId) || 'NOID', clean(v.invoice) || 'NOINV', digits(v.phone)];
     return parts.join('__').slice(0, 200);
   }
 
@@ -165,7 +164,7 @@
     var first = data && data.name ? data.name.split(/\s+/)[0] : '';
     if (previewRun) {
       $('#pay-success-title').textContent = 'Preview: payment step reached';
-      $('#pay-success-text').textContent = 'In live mode, ' + (first || 'the client') + ' would now pay on Stripe and come back to this confirmation. ' +
+      $('#pay-success-text').textContent = 'In live mode, ' + (first || 'the client') + ' would now pay on the secure checkout page and come back to this confirmation. ' +
         'A "Payment received" email from JRishiCPAs then goes to ' + (data && data.email ? data.email : 'their email') + '.';
     } else {
       $('#pay-success-title').textContent = 'Payment received' + (first ? ', thank you ' + first : '');
@@ -196,7 +195,7 @@
     window.location.assign(url.toString());
   });
 
-  // ---------- Return from Stripe ----------
+  // ---------- Return from checkout ----------
   var params = new URLSearchParams(window.location.search);
   if (params.get('status') === 'success') {
     showSuccess(load(), false);
