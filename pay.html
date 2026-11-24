@@ -31,7 +31,7 @@
       <div class="container">
         <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Secure online payment</p>
         <h1>Make a payment</h1>
-        <p class="lead">Pay your JRishiCPAs invoice by card, Apple Pay or Google Pay. Confirm your details and the amount, then pay securely right here on this page.</p>
+        <p class="lead">Pay your JRishiCPAs invoice, retainer or deposit by credit card, Apple Pay or Google Pay. Confirm your details and the amount, then pay securely right here on this page.</p>
       </div>
     </section>
 
@@ -61,59 +61,82 @@
                 <input id="pay-name" name="name" type="text" autocomplete="name" required aria-describedby="pay-name-error">
                 <p class="error" id="pay-name-error"></p>
               </div>
-              <div class="field">
-                <label for="pay-email">Email <span class="req" aria-hidden="true">*</span></label>
-                <input id="pay-email" name="email" type="email" autocomplete="email" required aria-describedby="pay-email-help pay-email-error">
-                <p class="field-help" id="pay-email-help">Your payment confirmation will be sent here.</p>
-                <p class="error" id="pay-email-error"></p>
-              </div>
               <div class="field-row">
+                <div class="field">
+                  <label for="pay-email">Email <span class="req" aria-hidden="true">*</span></label>
+                  <input id="pay-email" name="email" type="email" autocomplete="email" required aria-describedby="pay-email-help pay-email-error">
+                  <p class="field-help" id="pay-email-help">Your payment confirmation is sent here.</p>
+                  <p class="error" id="pay-email-error"></p>
+                </div>
                 <div class="field">
                   <label for="pay-phone">Phone number <span class="req" aria-hidden="true">*</span></label>
                   <input id="pay-phone" name="phone" type="tel" autocomplete="tel" required aria-describedby="pay-phone-error">
                   <p class="error" id="pay-phone-error"></p>
                 </div>
+              </div>
+              <div class="field-row">
                 <div class="field">
                   <label for="pay-client">Client ID <span class="optional">(optional)</span></label>
                   <input id="pay-client" name="clientId" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. JR-1042" aria-describedby="pay-client-help pay-client-error">
                   <p class="field-help" id="pay-client-help">Shown at the top of your invoice, if you have one.</p>
                   <p class="error" id="pay-client-error"></p>
                 </div>
-              </div>
-              <div class="field-row">
                 <div class="field">
                   <label for="pay-invoice">Invoice number <span class="optional">(optional)</span></label>
-                  <input id="pay-invoice" name="invoice" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. INV-2026-031" aria-describedby="pay-invoice-error">
+                  <input id="pay-invoice" name="invoice" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. INV-2026-031" aria-describedby="pay-invoice-help pay-invoice-error">
+                  <p class="field-help" id="pay-invoice-help">No invoice number? Leave this blank and enter an amount below.</p>
                   <p class="error" id="pay-invoice-error"></p>
                 </div>
-                <div class="field">
-                  <label for="pay-for">Payment for <span class="optional">(optional)</span></label>
-                  <select id="pay-for" name="service">
-                    <option value="">Select a service</option>
-                    <option>Personal tax returns</option>
-                    <option>Self-employed &amp; small business tax</option>
-                    <option>Corporate tax &amp; year-end</option>
-                    <option>Bookkeeping</option>
-                    <option>Payroll</option>
-                    <option>Business set-up &amp; incorporation</option>
-                    <option>Tax planning</option>
-                    <option>CRA support &amp; catch-up filing</option>
-                    <option>Advisory &amp; fractional CFO</option>
-                    <option>Other</option>
-                  </select>
+              </div>
+
+              <!-- Amount box: "Invoice total" when an invoice number is entered,
+                   otherwise "Enter an amount" with what the payment is for -->
+              <div class="pay-box pay-amount-box" id="pay-amount-box" data-invoice="no">
+                <div class="pay-box-head">
+                  <span class="pay-box-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18M16.5 7.5c0-1.7-2-3-4.5-3s-4.5 1.3-4.5 3 2 2.6 4.5 3 4.5 1.3 4.5 3-2 3-4.5 3-4.5-1.3-4.5-3"/></svg></span>
+                  <div>
+                    <p class="pay-box-title" id="pay-amount-title">Enter an amount</p>
+                    <p class="pay-box-sub" id="pay-amount-sub">No invoice number? Tell us what the payment is for and how much you’d like to pay.</p>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label for="pay-for">Payment for <span class="req" id="pay-for-req" aria-hidden="true">*</span><span class="optional" id="pay-for-optional" hidden>(optional)</span></label>
+                    <select id="pay-for" name="service" aria-describedby="pay-for-error">
+                      <option value="">Select a service</option>
+                      <option>Personal tax returns</option>
+                      <option>Self-employed &amp; small business tax</option>
+                      <option>Corporate tax &amp; year-end</option>
+                      <option>Bookkeeping</option>
+                      <option>Payroll</option>
+                      <option>Business set-up &amp; incorporation</option>
+                      <option>Tax planning</option>
+                      <option>CRA support &amp; catch-up filing</option>
+                      <option>Advisory &amp; fractional CFO</option>
+                      <option>Retainer or deposit</option>
+                      <option>Other</option>
+                    </select>
+                    <p class="error" id="pay-for-error"></p>
+                  </div>
+                  <div class="field pay-amount-field">
+                    <label for="pay-amount"><span id="pay-amount-label">Amount to pay (CAD)</span> <span class="req" aria-hidden="true">*</span></label>
+                    <div class="pay-amount-input">
+                      <span aria-hidden="true">$</span>
+                      <input id="pay-amount" name="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" required aria-describedby="pay-amount-help pay-amount-error">
+                    </div>
+                    <p class="field-help" id="pay-amount-help">Between $1 and $50,000.</p>
+                    <p class="error" id="pay-amount-error"></p>
+                  </div>
+                </div>
+                <div class="field" id="pay-note-field">
+                  <label for="pay-note">Note <span class="optional">(optional)</span></label>
+                  <textarea id="pay-note" name="note" rows="2" maxlength="200" placeholder="e.g. Deposit for my 2026 corporate year-end" aria-describedby="pay-note-error"></textarea>
+                  <p class="error" id="pay-note-error"></p>
                 </div>
               </div>
-              <div class="field pay-amount-field">
-                <label for="pay-amount">Amount to pay (CAD) <span class="req" aria-hidden="true">*</span></label>
-                <div class="pay-amount-input">
-                  <span aria-hidden="true">$</span>
-                  <input id="pay-amount" name="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" required aria-describedby="pay-amount-help pay-amount-error">
-                </div>
-                <p class="field-help" id="pay-amount-help">Enter the total shown on your invoice.</p>
-                <p class="error" id="pay-amount-error"></p>
-              </div>
+
               <div class="field field-check">
-                <label><input type="checkbox" id="pay-confirm" name="confirm" aria-describedby="pay-confirm-error"> I confirm these details are correct and I'm authorized to pay this invoice.</label>
+                <label><input type="checkbox" id="pay-confirm" name="confirm" aria-describedby="pay-confirm-error"> I confirm these details are correct and I'm authorized to make this payment.</label>
                 <p class="error" id="pay-confirm-error"></p>
               </div>
               <div class="step-actions">
@@ -126,12 +149,29 @@
               <dl class="pay-summary" id="pay-summary"></dl>
               <p class="pay-total"><span>Amount due</span><strong id="pay-total">$0.00 CAD</strong></p>
 
-              <div class="pay-element-wrap">
-                <p class="pay-element-label">Payment details</p>
+              <div class="pay-box pay-express" id="pay-express" hidden>
+                <p class="pay-box-title">Express pay</p>
+                <div id="express-element" class="pay-express-element"></div>
+              </div>
+              <p class="pay-or" id="pay-or" hidden><span>or pay by credit card</span></p>
+
+              <div class="pay-box pay-cc-box" id="pay-cc-box">
+                <div class="pay-box-head pay-cc-head">
+                  <span class="pay-box-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6.5 15h4"/></svg></span>
+                  <div>
+                    <p class="pay-box-title">Credit card</p>
+                    <p class="pay-box-sub">Visa, Mastercard or American Express</p>
+                  </div>
+                  <ul class="pay-cc-brands" aria-hidden="true">
+                    <li class="cc-visa">VISA</li>
+                    <li class="cc-mc"><i></i><i></i></li>
+                    <li class="cc-amex">AMEX</li>
+                  </ul>
+                </div>
                 <div id="payment-element" class="pay-element"></div>
                 <div class="pay-element-placeholder" id="pay-element-placeholder" hidden>
-                  <p><strong>Card form</strong></p>
-                  <p>The secure card form (card number, expiry, CVC, plus Apple Pay and Google Pay where available) appears here once online payments are connected.</p>
+                  <p><strong>Credit card form</strong></p>
+                  <p>The secure card form (card number, expiry date and security code) appears here once online payments are connected. On supported devices, Apple Pay and Google Pay buttons appear above it.</p>
                 </div>
               </div>
               <p class="error pay-error" id="pay-error" role="alert"></p>
@@ -157,8 +197,8 @@
           <div class="pay-aside-card">
             <h2>How it works</h2>
             <ol class="pay-steps">
-              <li><span class="pay-step-num" aria-hidden="true">1</span><div><strong>Verify your details</strong><span>Name, email and phone, plus your Client ID if you have one, and the invoice amount.</span></div></li>
-              <li><span class="pay-step-num" aria-hidden="true">2</span><div><strong>Pay</strong><span>Pay by card, Apple Pay or Google Pay without leaving this page.</span></div></li>
+              <li><span class="pay-step-num" aria-hidden="true">1</span><div><strong>Verify your details</strong><span>Name, email and phone, plus your Client ID and invoice number if you have them. No invoice? Just enter the amount.</span></div></li>
+              <li><span class="pay-step-num" aria-hidden="true">2</span><div><strong>Pay</strong><span>Pay by credit card, or Apple Pay or Google Pay where available, without leaving this page.</span></div></li>
               <li><span class="pay-step-num" aria-hidden="true">3</span><div><strong>Get your receipt</strong><span>A payment confirmation is emailed to you right away.</span></div></li>
             </ol>
           </div>

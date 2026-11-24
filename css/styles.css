@@ -823,10 +823,36 @@ body::before {
 .pay-total { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 0 0 1.25rem; padding: .9rem 1rem; border-radius: var(--radius-sm); background: var(--ink); color: var(--on-ink); }
 .pay-total span { font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--on-ink-muted); }
 .pay-total strong { font-family: var(--font-display); font-size: 1.45rem; color: #fff; font-variant-numeric: tabular-nums; }
-.pay-element-wrap { margin: 0 0 .5rem; }
-.pay-element-label { margin: 0 0 .5rem; font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+/* Boxes on the payment page: amount, express pay, credit card */
+.pay-box { margin: 0 0 1rem; padding: 1.1rem 1.15rem .35rem; border: 1px solid var(--rule-strong); border-radius: 14px; background: var(--paper); }
+.pay-box[hidden], .pay-or[hidden], .pay-box .field[hidden] { display: none; }
+.pay-box .field { margin-bottom: .85rem; }
+.pay-box-head { display: flex; flex-wrap: wrap; gap: .8rem; align-items: flex-start; margin-bottom: 1rem; }
+.pay-box-head > div { flex: 1 1 12rem; min-width: 0; }
+.pay-box-icon { display: grid; place-items: center; width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; background: var(--ink); }
+.pay-box-icon svg { width: 20px; height: 20px; fill: none; stroke: var(--star); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.pay-box-title { margin: 0; font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: -.01em; color: var(--ink); }
+.pay-box-sub { margin: .15rem 0 0; font-size: .9rem; color: var(--muted); }
+.pay-amount-box { transition: background-color .25s var(--ease), border-color .25s var(--ease); }
+.pay-amount-box[data-invoice="no"] { background: var(--accent-tint); border-color: var(--accent-soft); }
+.pay-amount-box .pay-amount-input { max-width: none; }
+.pay-express { padding-bottom: 1.15rem; background: var(--card); }
+.pay-express .pay-box-title { margin-bottom: .75rem; font-family: var(--font-body); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.pay-express-element { min-height: 46px; }
+.pay-or { display: flex; align-items: center; gap: .75rem; margin: 0 0 1rem; font-size: .76rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.pay-or::before, .pay-or::after { content: ""; flex: 1; height: 1px; background: var(--rule-strong); }
+.pay-cc-box { padding-bottom: 1.15rem; background: var(--card); border: 1.5px solid var(--ink); box-shadow: var(--shadow); }
+.pay-cc-brands { display: flex; gap: .35rem; margin: .2rem 0 0 auto; padding: 0; list-style: none; }
+.pay-cc-brands li { display: grid; place-items: center; height: 24px; min-width: 38px; padding: 0 .4rem; border-radius: 5px; font-size: .66rem; font-weight: 800; line-height: 1; letter-spacing: .02em; color: #fff; }
+.pay-cc-brands .cc-visa { background: #1a1f71; font-style: italic; font-size: .72rem; }
+.pay-cc-brands .cc-amex { background: #1f72cd; }
+.pay-cc-brands .cc-mc { position: relative; background: #fff; border: 1px solid var(--rule-strong); }
+.pay-cc-brands .cc-mc i { position: absolute; top: 50%; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; }
+.pay-cc-brands .cc-mc i:first-child { left: 7px; background: #eb001b; }
+.pay-cc-brands .cc-mc i:last-child { left: 15px; background: #f79e1b; mix-blend-mode: multiply; }
 .pay-element { min-height: 1px; }
 .pay-element-placeholder { padding: 1.1rem 1.2rem; border: 1.5px dashed var(--rule-strong); border-radius: 10px; background: var(--paper); color: var(--muted); font-size: .93rem; }
+.pay-element-placeholder[hidden] { display: none; }
 .pay-element-placeholder p { margin: 0 0 .35rem; }
 .pay-element-placeholder p:last-child { margin: 0; }
 .pay-error:not(:empty) { margin: .75rem 0 0; padding: .65rem .85rem; border-radius: var(--radius-sm); background: #fbe9e5; }
@@ -837,6 +863,7 @@ body::before {
   .pay-hero { padding-block: 2rem 1.5rem; }
   .pay-body { padding-block: 1.5rem 3rem; }
   .pay-card { padding: 1.25rem; border-radius: 16px; }
+  .pay-box { padding-inline: .95rem; }
   .pay-summary > div { grid-template-columns: 6rem minmax(0, 1fr); gap: .75rem; }
   .pay-card .step-actions { flex-direction: column-reverse; align-items: stretch; }
   .pay-card .step-actions .btn { width: 100%; margin: 0; }

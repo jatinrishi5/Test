@@ -48,7 +48,8 @@ function fromMetadata(m) {
     phone: typeof md.phone === 'string' ? md.phone.slice(0, 40) : '',
     clientId: pick(md.client_id, /^[A-Z0-9][A-Z0-9-]{2,19}$/, 20),
     invoice: pick(md.invoice, /^[A-Z0-9][A-Z0-9-]{0,29}$/, 30),
-    service: typeof md.service === 'string' ? md.service.slice(0, 80) : ''
+    service: typeof md.service === 'string' ? md.service.slice(0, 80) : '',
+    note: typeof md.note === 'string' ? md.note.slice(0, 200) : ''
   };
 }
 
@@ -63,6 +64,7 @@ async function handleSucceeded(pi, livemode) {
     paidAt: torontoDate(pi.created),
     clientId: m.clientId,
     invoice: m.invoice,
+    service: m.service,
     reference: pi.id
   };
   const stripeUrl = `https://dashboard.stripe.com/${livemode ? '' : 'test/'}payments/${pi.id}`;
@@ -78,6 +80,7 @@ async function handleSucceeded(pi, livemode) {
         ['Client ID', m.clientId],
         ['Invoice', m.invoice],
         ['Payment for', m.service],
+        ['Note', m.note],
         ['Name', m.name],
         ['Email', m.email],
         ['Phone', m.phone],

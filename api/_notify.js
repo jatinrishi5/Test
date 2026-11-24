@@ -244,6 +244,7 @@ async function sendPaymentConfirmation(p) {
     ['Date', p.paidAt],
     ['Client ID', p.clientId],
     ['Invoice', p.invoice],
+    ['Payment for', p.service],
     ['Payment reference', p.reference]
   ].filter(([, v]) => v);
 
