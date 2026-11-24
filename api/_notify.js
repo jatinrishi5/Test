@@ -117,9 +117,10 @@ function shell(inner) {
 }
 
 // ---------- Alert to the firm ----------
-async function sendAlert({ subject, title, rows, replyTo, footer }) {
+async function sendAlert({ subject, title, rows, replyTo, footer, link }) {
   const to = process.env.NOTIFY_EMAIL;
   if (!to) { console.warn('alert skipped: NOTIFY_EMAIL not set'); return false; }
+  const button = link && link.href ? link : { href: dashboardUrl(), label: 'Open in Supabase' };
   const cells = rows.map(([label, value]) => (
     `<tr><td style="padding:10px 14px;border-bottom:1px solid #ece6da;color:#6b6e78;font-size:13px;width:150px;vertical-align:top">${esc(label)}</td>` +
     `<td style="padding:10px 14px;border-bottom:1px solid #ece6da;color:#1c2233;font-size:14px;white-space:pre-wrap">${esc(value || '—')}</td></tr>`
@@ -127,11 +128,11 @@ async function sendAlert({ subject, title, rows, replyTo, footer }) {
   const html = shell(
     `<h1 style="margin:0 0 14px;font-size:20px;color:#101a30">${esc(title || subject)}</h1>` +
     `<table style="width:100%;border-collapse:collapse">${cells}</table>` +
-    `<p style="margin:18px 0 0"><a href="${esc(dashboardUrl())}" style="display:inline-block;background:#c5a46d;color:#101a30;text-decoration:none;font-weight:600;padding:10px 16px;border-radius:6px">Open in Supabase</a></p>` +
+    `<p style="margin:18px 0 0"><a href="${esc(button.href)}" style="display:inline-block;background:#c5a46d;color:#101a30;text-decoration:none;font-weight:600;padding:10px 16px;border-radius:6px">${esc(button.label)}</a></p>` +
     (footer ? `<p style="margin:16px 0 0;color:#6b6e78;font-size:13px">${esc(footer)}</p>` : '')
   );
   const text = rows.map(([label, value]) => `${label}: ${value || '-'}`).join('\n') +
-    `\n\nOpen in Supabase: ${dashboardUrl()}` + (footer ? `\n\n${footer}` : '');
+    `\n\n${button.label}: ${button.href}` + (footer ? `\n\n${footer}` : '');
   return sendEmail({
     from: process.env.RESEND_FROM || 'JRishiCPAs Website <onboarding@resend.dev>',
     to, subject, html, text, replyTo, label: 'alert email'
@@ -216,4 +217,73 @@ async function sendClientConfirmation(row) {
   return resendFrom ? sendEmail({ from: resendFrom, ...message }) : sendViaGmail(message);
 }
 
-module.exports = { sendAlert, sendClientConfirmation, SITUATION_LABELS, TYPE_LABELS, torontoTime, oneLine };
+// ---------- Payment received (to the client) ----------
+// Sent by /api/stripe-webhook after Stripe confirms a payment. Contains only fixed
+// wording, a first name that passes a strict check, the amount from Stripe, and
+// the Client ID / invoice number (already limited to letters, digits and dashes).
+function formatMoney(amountMinor, currency) {
+  const code = String(currency || 'cad').toUpperCase();
+  try {
+    return new Intl.NumberFormat('en-CA', { style: 'currency', currency: code }).format((amountMinor || 0) / 100) + ' ' + code;
+  } catch (e) {
+    return ((amountMinor || 0) / 100).toFixed(2) + ' ' + code;
+  }
+}
+
+async function sendPaymentConfirmation(p) {
+  const resendFrom = process.env.CLIENT_FROM;
+  const viaGmail = !resendFrom && process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD;
+  if (!resendFrom && !viaGmail) return false;
+  if (!p.email) return false;
+
+  const first = safeFirstName(p.name);
+  const site = SITE_URL();
+  const amount = formatMoney(p.amount, p.currency);
+  const rows = [
+    ['Amount paid', amount],
+    ['Date', p.paidAt],
+    ['Client ID', p.clientId],
+    ['Invoice', p.invoice],
+    ['Payment for', p.service],
+    ['Payment reference', p.reference]
+  ].filter(([, v]) => v);
+
+  const html = shell(
+    `<h1 style="margin:0 0 12px;font-family:Georgia,serif;font-weight:500;font-size:24px;color:#101a30">Payment received${first ? ', thank you ' + esc(first) : ''}.</h1>` +
+    `<p style="margin:0 0 16px">We’ve received your payment of <strong>${esc(amount)}</strong>. Thank you for paying online.</p>` +
+    '<table style="width:100%;border-collapse:collapse;margin:0 0 16px">' +
+    rows.map(([label, value]) => (
+      `<tr><td style="padding:9px 12px;border-bottom:1px solid #ece6da;color:#6b6e78;font-size:13px;width:150px">${esc(label)}</td>` +
+      `<td style="padding:9px 12px;border-bottom:1px solid #ece6da;color:#1c2233;font-size:14px;font-weight:600">${esc(value)}</td></tr>`
+    )).join('') +
+    '</table>' +
+    '<p style="margin:0 0 14px">Keep this email for your records.</p>' +
+    '<p style="margin:0 0 14px">Questions about this payment or your invoice? Just reply to this email.</p>' +
+    '<p style="margin:22px 0 0;padding-top:14px;border-top:1px solid #ece6da;color:#6b6e78;font-size:12.5px">' +
+    `JRishiCPAs · Tax &amp; accounting, online across Canada · <a href="${esc(site)}" style="color:#7d5f2e">${esc(site.replace(/^https?:\/\//, ''))}</a><br>` +
+    'You’re receiving this because a payment was made to JRishiCPAs with this email address.</p>'
+  );
+  const text = [
+    `Payment received${first ? ', thank you ' + first : ''}.`,
+    '',
+    `We've received your payment of ${amount}. Thank you for paying online.`,
+    '',
+    ...rows.map(([label, value]) => `${label}: ${value}`),
+    '',
+    'Keep this email for your records.',
+    'Questions about this payment or your invoice? Just reply to this email.',
+    '',
+    `JRishiCPAs - Tax & accounting, online across Canada - ${site}`
+  ].join('\n');
+
+  const message = {
+    to: p.email,
+    subject: `Payment received: ${amount} – JRishiCPAs`,
+    html, text,
+    replyTo: process.env.NOTIFY_EMAIL || undefined,
+    label: 'payment confirmation'
+  };
+  return resendFrom ? sendEmail({ from: resendFrom, ...message }) : sendViaGmail(message);
+}
+
+module.exports = { sendAlert, sendClientConfirmation, sendPaymentConfirmation, formatMoney, SITUATION_LABELS, TYPE_LABELS, torontoTime, oneLine };
