@@ -833,8 +833,7 @@ body::before {
 .pay-box-icon svg { width: 20px; height: 20px; fill: none; stroke: var(--star); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .pay-box-title { margin: 0; font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: -.01em; color: var(--ink); }
 .pay-box-sub { margin: .15rem 0 0; font-size: .9rem; color: var(--muted); }
-.pay-amount-box { transition: background-color .25s var(--ease), border-color .25s var(--ease); }
-.pay-amount-box[data-invoice="no"] { background: var(--accent-tint); border-color: var(--accent-soft); }
+.pay-amount-box { background: var(--accent-tint); border-color: var(--accent-soft); }
 .pay-amount-box .pay-amount-input { max-width: none; }
 .pay-express { padding-bottom: 1.15rem; background: var(--card); }
 .pay-express .pay-box-title { margin-bottom: .75rem; font-family: var(--font-body); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }

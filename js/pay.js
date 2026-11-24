@@ -97,16 +97,12 @@
       if (v && !invoicePattern.test(v.toUpperCase())) return 'Invoice numbers use letters, numbers and dashes only.';
       return '';
     },
-    service: function (v) {
-      if (!v && !hasInvoice()) return 'Please choose what this payment is for.';
-      return '';
-    },
     note: function (v) {
       if (v.length > 200) return 'Please keep the note under 200 characters.';
       return '';
     },
     amount: function (v) {
-      if (!v) return hasInvoice() ? 'Please enter the total shown on your invoice.' : 'Please enter the amount to pay.';
+      if (!v) return 'Please enter the amount to pay.';
       var c = toCents(v);
       if (!isFinite(c)) return 'Enter an amount like 250 or 1,234.56.';
       if (c < 100 || c > 5000000) return 'Enter an amount between $1.00 and $50,000.00.';
@@ -139,29 +135,17 @@
   }
 
   // ---------- Amount box ----------
-  // With an invoice number the box asks for the invoice total. Without one it asks
-  // for an amount, what the payment is for (required) and an optional note.
-  function hasInvoice() { return !!form.elements.invoice.value.trim(); }
-  function updateAmountBox() {
+  // The amount is always required. The invoice number is optional; when it's
+  // entered, the hint points to that invoice's total.
+  var amountSub = $('#pay-amount-sub');
+  var amountSubDefault = amountSub.textContent;
+  form.elements.invoice.addEventListener('input', function () {
     var inv = form.elements.invoice.value.trim().toUpperCase();
-    var box = $('#pay-amount-box');
-    box.setAttribute('data-invoice', inv ? 'yes' : 'no');
-    $('#pay-amount-title').textContent = inv ? 'Invoice total' : 'Enter an amount';
-    $('#pay-amount-sub').textContent = inv
-      ? 'Enter the total shown on invoice ' + inv + ', including any GST/HST.'
-      : 'No invoice number? Tell us what the payment is for and how much you\u2019d like to pay.';
-    $('#pay-amount-label').textContent = inv ? 'Invoice total (CAD)' : 'Amount to pay (CAD)';
-    $('#pay-for-req').hidden = !!inv;
-    $('#pay-for-optional').hidden = !inv;
-    $('#pay-note-field').hidden = !!inv;
-    if (inv) { setError(form.elements.service, ''); setError(form.elements.note, ''); }
-  }
-  form.elements.invoice.addEventListener('input', updateAmountBox);
-  updateAmountBox();
+    amountSub.textContent = inv ? 'Enter the total shown on invoice ' + inv + ', including any GST/HST.' : amountSubDefault;
+  });
 
   Object.keys(rules).forEach(function (name) {
     var input = form.elements[name];
-    if (name === 'service') input.addEventListener('change', function () { validate(input); });
     input.addEventListener('blur', function () {
       if (name === 'phone') formatPhone(input);
       if (name === 'amount') formatAmount(input);
@@ -197,7 +181,7 @@
       clientId: form.elements.clientId.value.trim().toUpperCase(),
       invoice: form.elements.invoice.value.trim().toUpperCase(),
       service: form.elements.service.value,
-      note: hasInvoice() ? '' : form.elements.note.value.trim().replace(/\s+/g, ' '),
+      note: form.elements.note.value.trim().replace(/\s+/g, ' '),
       cents: toCents(form.elements.amount.value)
     };
   }
@@ -260,6 +244,7 @@
 
       // Express pay box: Apple Pay / Google Pay buttons, shown only on devices that support them
       expressForm = elements.create('expressCheckout', {
+        business: { name: 'JRishiCPAs' },  // name shown on the Apple Pay / Google Pay sheet
         paymentMethods: { applePay: 'auto', googlePay: 'auto', link: 'never' },
         buttonType: { applePay: 'plain', googlePay: 'plain' },
         buttonTheme: { applePay: 'black', googlePay: 'black' },

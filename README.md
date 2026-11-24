@@ -99,11 +99,7 @@ After the 3-step form is saved, a Cal.com calendar appears with the visitor's na
 
 Clients pay invoices at `pay.html` ("Make a payment" in the top bar, mobile menu, footer and client-portal card). The page never names the payment processor (Stripe), and the client never leaves the site.
 
-1. **Your details.** Full name, email, phone (required), Client ID and invoice number (optional), and a confirmation checkbox. Below them is the **amount box**, which adapts:
-   - *With an invoice number:* "Invoice total" (CAD, $1–$50,000); "Payment for" is optional.
-   - *Without one:* "Enter an amount", with "Payment for" required (includes "Retainer or deposit") and an optional note (200 characters).
-
-   Validated in the browser and again on the server.
+1. **Your details.** Required: full name, email, phone and the **amount** (CAD, $1–$50,000, in its own "Amount to pay" box). Optional: Client ID, invoice number, what the payment is for (includes "Retainer or deposit") and a note (200 characters). Plus a confirmation checkbox. When an invoice number is entered, the amount box asks for that invoice's total. Validated in the browser and again on the server.
 2. **Review and pay.** A summary, the amount due, then two separate boxes:
    - **Express pay:** Apple Pay / Google Pay buttons (Stripe Express Checkout Element). Shown only on devices that support them.
    - **Credit card:** the card form (Stripe Payment Element, card only, styled to match the site) and the "Pay" button.

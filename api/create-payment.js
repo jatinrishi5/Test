@@ -70,7 +70,6 @@ module.exports = async (req, res) => {
     note: clean(b.note, 200).replace(/\s+/g, ' '),
     cents: toCents(b.amount)
   };
-  if (p.invoice) p.note = ''; // notes are only collected when there's no invoice number
 
   const fields = {};
   if (p.name.length < 2) fields.name = 'Please enter your full name.';
@@ -79,7 +78,6 @@ module.exports = async (req, res) => {
   if (digits.length < 10 || digits.length > 15) fields.phone = 'Enter a valid phone number.';
   if (p.clientId && !/^[A-Z0-9][A-Z0-9-]{2,19}$/.test(p.clientId)) fields.clientId = 'Client IDs are 3–20 letters, numbers or dashes.';
   if (p.invoice && !/^[A-Z0-9][A-Z0-9-]{0,29}$/.test(p.invoice)) fields.invoice = 'Invoice numbers use letters, numbers and dashes only.';
-  if (!p.invoice && !p.service) fields.service = 'Please choose what this payment is for.';
   if (!Number.isFinite(p.cents) || p.cents < MIN_CENTS || p.cents > MAX_CENTS) fields.amount = 'Enter an amount between $1.00 and $50,000.00.';
   if (Object.keys(fields).length) return send(res, 400, { error: 'Please check the highlighted fields.', fields });
 
@@ -88,7 +86,7 @@ module.exports = async (req, res) => {
       amount: p.cents,
       currency: 'cad',
       'payment_method_types[]': 'card',
-      description: p.invoice ? `JRishiCPAs invoice payment ${p.invoice}` : `JRishiCPAs payment: ${p.service}`,
+      description: p.invoice ? `JRishiCPAs invoice payment ${p.invoice}` : `JRishiCPAs payment${p.service ? `: ${p.service}` : ''}`,
       'metadata[name]': p.name,
       'metadata[email]': p.email,
       'metadata[phone]': p.phone,
