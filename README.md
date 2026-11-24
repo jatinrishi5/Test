@@ -97,24 +97,26 @@ After the 3-step form is saved, a Cal.com calendar appears with the visitor's na
 
 ## Online payments (`pay.html`)
 
-Clients pay invoices at `pay.html` ("Make a payment" in the top bar, mobile menu, footer and client-portal card).
+Clients pay invoices at `pay.html` ("Make a payment" in the top bar, mobile menu, footer and client-portal card). The page never names the payment processor (Stripe), and the client never leaves the site.
 
-1. **Verify details.** Full name, email, phone and Client ID (required), invoice number and service (optional), and a confirmation checkbox, then a review step. Checked in the browser.
-2. **Pay on Stripe.** The page opens a **Stripe Payment Link** (Stripe-hosted checkout; card details never touch this site). The email is pre-filled and `client_reference_id` carries `CLIENTID__INVOICE__PHONE`, e.g. `JR-1042__INV-2026-031__4165550100`, so each payment in Stripe shows who paid and for which invoice. The client enters the invoice amount on Stripe.
-3. **Confirmation.** Stripe redirects back to `pay.html?status=success`. Stripe then calls `POST /api/stripe-webhook`, which verifies Stripe's signature and sends the client a JRishiCPAs **"Payment received"** email (amount, date, Client ID, invoice, reference) and the firm an alert with an "Open in Stripe" button. Pending payments (e.g. bank debits) are confirmed only once they clear.
+1. **Your details.** Full name, email, phone (required), Client ID, invoice number and service (optional), the **amount** (CAD, $1–$50,000) and a confirmation checkbox. Validated in the browser and again on the server.
+2. **Review and pay.** A summary plus the card form embedded in the page (Stripe Payment Element, styled to match the site: card, Apple Pay and Google Pay). On "Pay", `POST /api/create-payment` creates a card PaymentIntent for that amount with the client's details as metadata, and the page confirms it in place. Bank checks (3-D Secure) return to `pay.html?status=return`.
+3. **Confirmation.** The page shows "Payment received". Stripe then calls `POST /api/stripe-webhook` (`payment_intent.succeeded`), which verifies Stripe's signature and emails the client a JRishiCPAs **"Payment received"** confirmation (amount, date, Client ID, invoice, reference) and the firm an alert with an "Open in Stripe" button. Stripe's own receipt emails should stay **off** (they come from a Stripe address).
 
-**Preview mode.** While `data-payment-link` on `#pay-form` in `pay.html` is empty, the page shows a "Preview mode" banner and simulates the payment step. No money is taken.
+| File | What it does |
+| --- | --- |
+| `api/payment-config.js` | `GET`: tells the page whether payments are on and gives it the publishable key |
+| `api/create-payment.js` | `POST`: validates details and amount, creates the PaymentIntent (Stripe API version pinned to `2024-06-20`) |
+| `api/stripe-webhook.js` | Payment confirmation and firm alert, for payments made on this page only |
 
 | Name | Value |
 | --- | --- |
-| `STRIPE_WEBHOOK_SECRET` | Signing secret (`whsec_…`) of the Stripe webhook endpoint `https://jrishicpas.vercel.app/api/stripe-webhook`, listening for `checkout.session.completed` and `checkout.session.async_payment_succeeded`. Without it the endpoint refuses every request |
+| `STRIPE_PUBLISHABLE_KEY` | `pk_live_…` for Production; `pk_test_…` for Preview to test with test cards |
+| `STRIPE_SECRET_KEY` | A **restricted key** with only *PaymentIntents: Write*. `rk_live_…` for Production; `rk_test_…`/`sk_test_…` for Preview. Mark as Sensitive |
+| `STRIPE_WEBHOOK_SECRET` | Signing secret of webhook `we_1UfKXgHttrf0LjrLTVkgCO2a` (`https://jrishicpas.vercel.app/api/stripe-webhook`, `payment_intent.succeeded`). Already set for Production |
 
-Client confirmations use the same sender as booking confirmations (`CLIENT_FROM` or Gmail). No Stripe secret key is stored anywhere.
+**Preview mode.** Until both keys are set, the page shows a "Preview mode" banner and a placeholder instead of the card form, and simulates the payment. With test keys it shows a "Test mode" banner (card 4242 4242 4242 4242).
 
-**Going live**
+**Already set up in Stripe:** the webhook endpoint above, and payment-method domains `jrishicpas.vercel.app` and `jatinrishi5.github.io` (Apple Pay / Google Pay).
 
-1. Finish activating the Stripe account (business details, website, support phone, identity, bank account).
-2. Create the Payment Link: product "Invoice payment", customer chooses the amount (CAD), after payment redirect to `https://jrishicpas.vercel.app/pay.html?status=success`.
-3. Create the webhook endpoint above and save its signing secret as `STRIPE_WEBHOOK_SECRET` in Vercel.
-4. Paste the Payment Link URL into `data-payment-link="…"` in `pay.html` and merge to `main`.
-
+**Before going live:** finish activating the Stripe account (charges are disabled until then), set the statement descriptor to `JRISHICPAS` (Settings → Public details), keep "Successful payments" customer emails off, add the two keys in Vercel, then merge.

@@ -8,16 +8,46 @@
   var success = $('#pay-success');
   if (!form) return;
 
-  // ---------- Payment connection ----------
-  // Paste the payment link into data-payment-link on #pay-form to go live.
-  // Without one the page runs in preview mode and no payment is taken.
-  var paymentLink = (form.getAttribute('data-payment-link') || '').trim();
-  var isLive = /^https:\/\/[A-Za-z0-9.-]+\/[A-Za-z0-9_\-\/]+$/.test(paymentLink);
+  // On Vercel the API is same-origin. The GitHub Pages copy calls the Vercel site.
+  var API_BASE = /\.github\.io$/.test(location.hostname) ? 'https://jrishicpas.vercel.app' : '';
   var submitBtn = $('#pay-submit');
-  if (!isLive) {
-    $('#pay-preview').hidden = false;
-    submitBtn.innerHTML = 'Simulate payment <span class="arrow" aria-hidden="true">→</span>';
+  var payError = $('#pay-error');
+
+  // ---------- Payment connection ----------
+  // The server says whether payments are on (both keys set in Vercel). If it's off,
+  // unreachable, or the page is opened as a local file, the page runs in preview mode.
+  var processor = null;   // card-form library instance
+  var elements = null;
+  var cardForm = null;
+  var mode = 'loading';   // 'loading' | 'live' | 'preview'
+
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = src; s.async = true;
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
   }
+
+  function withTimeout(promise, ms) {
+    return Promise.race([promise, new Promise(function (_, reject) { setTimeout(function () { reject(new Error('timeout')); }, ms); })]);
+  }
+
+  var ready = withTimeout(fetch(API_BASE + '/api/payment-config', { headers: { Accept: 'application/json' } }), 6000)
+    .then(function (r) { return r.ok ? r.json() : { enabled: false }; })
+    .then(function (cfg) {
+      if (!cfg || !cfg.enabled || !cfg.publishableKey) throw new Error('off');
+      return loadScript('https://js.stripe.com/v3/').then(function () {
+        processor = window.Stripe(cfg.publishableKey);
+        mode = 'live';
+        if (cfg.testMode) $('#pay-testmode').hidden = false;
+      });
+    })
+    .catch(function () {
+      mode = 'preview';
+      $('#pay-preview').hidden = false;
+    });
 
   // ---------- Storage (per browser, optional) ----------
   var STORE_KEY = 'jrishicpas-payment';
@@ -28,8 +58,18 @@
   var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   var clientPattern = /^[A-Z0-9][A-Z0-9-]{2,19}$/;
   var invoicePattern = /^[A-Z0-9][A-Z0-9-]{0,29}$/;
-
   function digits(v) { return v.replace(/\D/g, ''); }
+
+  // "1,234.5" -> 123450 cents; invalid -> NaN
+  function toCents(v) {
+    var s = String(v || '').replace(/[$,\s]/g, '');
+    if (!/^\d{1,7}(\.\d{1,2})?$/.test(s)) return NaN;
+    var parts = s.split('.');
+    return Number(parts[0]) * 100 + Number(((parts[1] || '') + '00').slice(0, 2));
+  }
+  function money(cents) {
+    return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(cents / 100) + ' CAD';
+  }
 
   var rules = {
     name: function (v) {
@@ -55,6 +95,13 @@
     invoice: function (v) {
       if (v && !invoicePattern.test(v.toUpperCase())) return 'Invoice numbers use letters, numbers and dashes only.';
       return '';
+    },
+    amount: function (v) {
+      if (!v) return 'Please enter the amount to pay.';
+      var c = toCents(v);
+      if (!isFinite(c)) return 'Enter an amount like 250 or 1,234.56.';
+      if (c < 100 || c > 5000000) return 'Enter an amount between $1.00 and $50,000.00.';
+      return '';
     }
   };
 
@@ -65,7 +112,6 @@
     var err = document.getElementById(input.id + '-error');
     if (err) err.textContent = msg;
   }
-
   function validate(input) {
     var rule = rules[input.name];
     if (!rule) return true;
@@ -73,17 +119,21 @@
     setError(input, msg);
     return !msg;
   }
-
   function formatPhone(input) {
     var d = digits(input.value);
     if (d.length === 11 && d.charAt(0) === '1') d = d.slice(1);
     if (d.length === 10) input.value = '(' + d.slice(0, 3) + ') ' + d.slice(3, 6) + '-' + d.slice(6);
+  }
+  function formatAmount(input) {
+    var c = toCents(input.value);
+    if (isFinite(c)) input.value = (c / 100).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   Object.keys(rules).forEach(function (name) {
     var input = form.elements[name];
     input.addEventListener('blur', function () {
       if (name === 'phone') formatPhone(input);
+      if (name === 'amount') formatAmount(input);
       if (name === 'clientId' || name === 'invoice') input.value = input.value.trim().toUpperCase();
       if (input.value.trim() || input.closest('.field').classList.contains('invalid')) validate(input);
     });
@@ -109,21 +159,21 @@
   }
 
   function values() {
-    var service = form.elements.service.value;
     return {
       name: form.elements.name.value.trim(),
       email: form.elements.email.value.trim(),
       phone: form.elements.phone.value.trim(),
       clientId: form.elements.clientId.value.trim().toUpperCase(),
       invoice: form.elements.invoice.value.trim().toUpperCase(),
-      service: service
+      service: form.elements.service.value,
+      cents: toCents(form.elements.amount.value)
     };
   }
 
   function fillSummary(dl, v) {
     dl.textContent = '';
     [['Name', v.name], ['Email', v.email], ['Phone', v.phone], ['Client ID', v.clientId],
-      ['Invoice', v.invoice], ['Payment for', v.service]].forEach(function (row) {
+      ['Invoice', v.invoice], ['Payment for', v.service], ['Amount', v.amountText]].forEach(function (row) {
       if (!row[1]) return;
       var wrap = document.createElement('div');
       var dt = document.createElement('dt'); dt.textContent = row[0];
@@ -132,11 +182,57 @@
     });
   }
 
+  // Card form styled to match the site
+  var appearance = {
+    theme: 'stripe',
+    variables: {
+      colorPrimary: '#7d5f2e',
+      colorBackground: '#fffdf9',
+      colorText: '#1c2233',
+      colorTextSecondary: '#5a5f6e',
+      colorDanger: '#b5391f',
+      fontFamily: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      fontSizeBase: '15px',
+      borderRadius: '10px',
+      spacingUnit: '4px'
+    },
+    rules: {
+      '.Input': { border: '1.5px solid #cbbfa9', boxShadow: 'none' },
+      '.Input:focus': { borderColor: '#7d5f2e', boxShadow: '0 0 0 4px #f0e6d3' },
+      '.Label': { fontWeight: '600', color: '#101a30' }
+    }
+  };
+
+  function mountCardForm(v) {
+    if (mode !== 'live') {
+      $('#pay-element-placeholder').hidden = false;
+      return;
+    }
+    $('#pay-element-placeholder').hidden = true;
+    if (!elements) {
+      elements = processor.elements({
+        mode: 'payment', amount: v.cents, currency: 'cad', paymentMethodTypes: ['card'],
+        appearance: appearance,
+        fonts: [{ cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap' }]
+      });
+      cardForm = elements.create('payment', {
+        layout: 'tabs',
+        defaultValues: { billingDetails: { name: v.name, email: v.email, phone: v.phone } },
+        wallets: { applePay: 'auto', googlePay: 'auto' },
+        terms: { card: 'never' }
+      });
+      cardForm.mount('#payment-element');
+    } else {
+      elements.update({ amount: v.cents });
+    }
+  }
+
   $('[data-pay-next]', form).addEventListener('click', function () {
     var first = null;
     Object.keys(rules).forEach(function (name) {
       var input = form.elements[name];
       if (name === 'phone') formatPhone(input);
+      if (name === 'amount') formatAmount(input);
       if (!validate(input) && !first) first = input;
     });
     if (!confirmBox.checked) {
@@ -144,61 +240,120 @@
       if (!first) first = confirmBox;
     }
     if (first) { first.focus(); return; }
-    fillSummary($('#pay-summary'), values());
+    var v = values();
+    fillSummary($('#pay-summary'), v);
+    $('#pay-total').textContent = money(v.cents);
+    $('#pay-submit-amount').textContent = money(v.cents).replace(' CAD', '');
+    payError.textContent = '';
     showStep(2);
+    ready.then(function () { mountCardForm(v); });
   });
 
   $('[data-pay-back]', form).addEventListener('click', function () { showStep(1); });
 
-  // Reference sent to the payment processor: CLIENTID__INVOICE__PHONEDIGITS (letters, digits, dashes, underscores only)
-  function reference(v) {
-    var clean = function (s) { return s.replace(/[^A-Za-z0-9-]/g, ''); };
-    var parts = [clean(v.clientId) || 'NOID', clean(v.invoice) || 'NOINV', digits(v.phone)];
-    return parts.join('__').slice(0, 200);
-  }
-
-  function showSuccess(data, previewRun) {
+  // ---------- Outcome ----------
+  function showOutcome(kind, data) {
     form.hidden = true;
     $('#pay-preview').hidden = true;
+    $('#pay-testmode').hidden = true;
     success.hidden = false;
     var first = data && data.name ? data.name.split(/\s+/)[0] : '';
-    if (previewRun) {
-      $('#pay-success-title').textContent = 'Preview: payment step reached';
-      $('#pay-success-text').textContent = 'In live mode, ' + (first || 'the client') + ' would now pay on the secure checkout page and come back to this confirmation. ' +
-        'A "Payment received" email from JRishiCPAs then goes to ' + (data && data.email ? data.email : 'their email') + '.';
+    var email = data && data.email ? data.email : '';
+    var title = $('#pay-success-title'), text = $('#pay-success-text');
+    if (kind === 'preview') {
+      title.textContent = 'Preview: payment complete';
+      text.textContent = 'In live mode, ' + (first || 'the client') + '’s card would be charged here and a “Payment received” email from JRishiCPAs would go to ' + (email || 'their email') + '.';
+    } else if (kind === 'processing') {
+      title.textContent = 'Payment processing';
+      text.textContent = 'Your payment is being processed. We’ll email ' + (email || 'you') + ' as soon as it’s confirmed.';
     } else {
-      $('#pay-success-title').textContent = 'Payment received' + (first ? ', thank you ' + first : '');
-      $('#pay-success-text').textContent = 'Your payment was successful. A confirmation email is on its way to ' +
-        (data && data.email ? data.email : 'you') + '. Keep it for your records.';
+      title.textContent = 'Payment received' + (first ? ', thank you ' + first : '');
+      text.textContent = 'Your payment was successful. A confirmation email is on its way to ' + (email || 'you') + '. Keep it for your records.';
     }
     if (data) {
       var dl = $('#pay-success-summary');
-      fillSummary(dl, { name: data.name, email: '', phone: '', clientId: data.clientId, invoice: data.invoice, service: data.service });
+      fillSummary(dl, { name: data.name, clientId: data.clientId, invoice: data.invoice, service: data.service, amountText: data.cents ? money(data.cents) : '' });
       dl.hidden = false;
     }
     success.focus();
+  }
+
+  function setBusy(busy, label) {
+    submitBtn.disabled = busy;
+    if (busy) submitBtn.textContent = label || 'Processing…';
+    else submitBtn.innerHTML = 'Pay <span id="pay-submit-amount">' + money(values().cents).replace(' CAD', '') + '</span>';
   }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (current !== 2) return;
     var v = values();
-    save({ name: v.name, email: v.email, clientId: v.clientId, invoice: v.invoice, service: v.service, at: Date.now() });
+    payError.textContent = '';
+    save({ name: v.name, email: v.email, clientId: v.clientId, invoice: v.invoice, service: v.service, cents: v.cents });
 
-    if (!isLive) { showSuccess(v, true); return; }
-
-    var url = new URL(paymentLink);
-    url.searchParams.set('prefilled_email', v.email);
-    url.searchParams.set('client_reference_id', reference(v));
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Opening secure checkout…';
-    window.location.assign(url.toString());
+    ready.then(function () {
+      if (mode !== 'live') { showOutcome('preview', v); return; }
+      setBusy(true);
+      elements.submit()
+        .then(function (r) {
+          if (r.error) throw { shown: r.error.message };
+          return fetch(API_BASE + '/api/create-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: v.name, email: v.email, phone: v.phone, clientId: v.clientId, invoice: v.invoice,
+              service: v.service, amount: (v.cents / 100).toFixed(2), company: form.elements.company.value
+            })
+          });
+        })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (!res.ok || !res.d.clientSecret) {
+            if (res.d && res.d.fields) {
+              showStep(1);
+              Object.keys(res.d.fields).forEach(function (k) { if (form.elements[k]) setError(form.elements[k], res.d.fields[k]); });
+            }
+            throw { shown: (res.d && res.d.error) || 'We couldn’t start the payment. Please try again.' };
+          }
+          return processor.confirmPayment({
+            elements: elements,
+            clientSecret: res.d.clientSecret,
+            confirmParams: { return_url: location.origin + location.pathname + '?status=return' },
+            redirect: 'if_required'
+          });
+        })
+        .then(function (result) {
+          if (result.error) throw { shown: result.error.message };
+          var status = result.paymentIntent && result.paymentIntent.status;
+          if (status === 'succeeded') showOutcome('succeeded', v);
+          else if (status === 'processing') showOutcome('processing', v);
+          else throw { shown: 'Your payment wasn’t completed. Please try again or use a different card.' };
+        })
+        .catch(function (err) {
+          payError.textContent = (err && err.shown) || 'Something went wrong. Please try again, or contact us.';
+          setBusy(false);
+        });
+    });
   });
 
-  // ---------- Return from checkout ----------
+  // ---------- Return from a bank check (3-D Secure) ----------
   var params = new URLSearchParams(window.location.search);
-  if (params.get('status') === 'success') {
-    showSuccess(load(), false);
+  var returnSecret = params.get('payment_intent_client_secret');
+  if (params.get('status') === 'return' && returnSecret) {
+    ready.then(function () {
+      if (mode !== 'live') return;
+      processor.retrievePaymentIntent(returnSecret).then(function (r) {
+        var status = r.paymentIntent && r.paymentIntent.status;
+        if (status === 'succeeded') showOutcome('succeeded', load());
+        else if (status === 'processing') showOutcome('processing', load());
+        else {
+          var alert = $('#pay-alert');
+          alert.textContent = 'Your payment wasn’t completed and you haven’t been charged. Please check your details and try again.';
+          alert.hidden = false;
+        }
+        history.replaceState(null, '', location.pathname);
+      });
+    });
   }
 
   var year = $('#year');

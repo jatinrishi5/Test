@@ -1,6 +1,7 @@
 // POST /api/stripe-webhook
-// Stripe calls this after someone pays through the website's Stripe Payment Link.
-// It emails the client a "Payment received" confirmation and alerts the firm.
+// Stripe calls this when a payment made on the website's payment page succeeds
+// (event payment_intent.succeeded). It emails the client a "Payment received"
+// confirmation and alerts the firm.
 //
 // Needs STRIPE_WEBHOOK_SECRET (the endpoint's signing secret, "whsec_…").
 // Without it the endpoint refuses every request, so nothing happens by accident.
@@ -32,57 +33,59 @@ function verifySignature(raw, header, secret, toleranceSeconds) {
     crypto.timingSafeEqual(Buffer.from(s), Buffer.from(expected)));
 }
 
-// The payment page sends client_reference_id = CLIENTID__INVOICE__PHONEDIGITS.
-function parseReference(ref) {
-  const [clientId = '', invoice = '', phone = ''] = String(ref || '').split('__');
-  const safe = (v, max) => (/^[A-Za-z0-9-]+$/.test(v) ? v.slice(0, max) : '');
-  return {
-    clientId: clientId === 'NOID' ? '' : safe(clientId, 20),
-    invoice: invoice === 'NOINV' ? '' : safe(invoice, 30),
-    phone: /^\d{7,15}$/.test(phone) ? phone : ''
-  };
-}
-
 function torontoDate(unixSeconds) {
   return new Date((unixSeconds || Date.now() / 1000) * 1000)
     .toLocaleString('en-CA', { timeZone: 'America/Toronto', dateStyle: 'medium', timeStyle: 'short' }) + ' ET';
 }
 
-async function handlePaid(session, livemode) {
-  const details = session.customer_details || {};
-  const ref = parseReference(session.client_reference_id);
-  const payment = {
-    name: details.name || '',
-    email: details.email || session.customer_email || '',
-    amount: session.amount_total,
-    currency: session.currency,
-    paidAt: torontoDate(session.created),
-    clientId: ref.clientId,
-    invoice: ref.invoice,
-    reference: typeof session.payment_intent === 'string' ? session.payment_intent : session.id
+// Values set by /api/create-payment; re-checked here because metadata is free text.
+function fromMetadata(m) {
+  const md = m || {};
+  const pick = (v, re, max) => (typeof v === 'string' && re.test(v) ? v.slice(0, max) : '');
+  return {
+    name: typeof md.name === 'string' ? md.name.slice(0, 120) : '',
+    email: pick(md.email, /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, 254),
+    phone: typeof md.phone === 'string' ? md.phone.slice(0, 40) : '',
+    clientId: pick(md.client_id, /^[A-Z0-9][A-Z0-9-]{2,19}$/, 20),
+    invoice: pick(md.invoice, /^[A-Z0-9][A-Z0-9-]{0,29}$/, 30),
+    service: typeof md.service === 'string' ? md.service.slice(0, 80) : ''
   };
-  const stripeUrl = typeof session.payment_intent === 'string'
-    ? `https://dashboard.stripe.com/${livemode ? '' : 'test/'}payments/${session.payment_intent}`
-    : `https://dashboard.stripe.com/${livemode ? '' : 'test/'}payments`;
+}
+
+async function handleSucceeded(pi, livemode) {
+  const m = fromMetadata(pi.metadata);
+  const amount = pi.amount_received || pi.amount;
+  const payment = {
+    name: m.name,
+    email: m.email,
+    amount,
+    currency: pi.currency,
+    paidAt: torontoDate(pi.created),
+    clientId: m.clientId,
+    invoice: m.invoice,
+    reference: pi.id
+  };
+  const stripeUrl = `https://dashboard.stripe.com/${livemode ? '' : 'test/'}payments/${pi.id}`;
 
   await Promise.all([
     sendPaymentConfirmation(payment),
     sendAlert({
-      subject: `Payment received: ${formatMoney(payment.amount, payment.currency)} from ${oneLine(payment.name || payment.email, 80)}`,
+      subject: `Payment received: ${formatMoney(amount, pi.currency)} from ${oneLine(m.name || m.email || 'a client', 80)}`,
       title: livemode ? 'Online payment received' : 'Test payment received (not real money)',
-      replyTo: payment.email || undefined,
+      replyTo: m.email || undefined,
       rows: [
-        ['Amount', formatMoney(payment.amount, payment.currency)],
-        ['Client ID', ref.clientId],
-        ['Invoice', ref.invoice],
-        ['Name', payment.name],
-        ['Email', payment.email],
-        ['Phone', details.phone || ref.phone],
+        ['Amount', formatMoney(amount, pi.currency)],
+        ['Client ID', m.clientId],
+        ['Invoice', m.invoice],
+        ['Payment for', m.service],
+        ['Name', m.name],
+        ['Email', m.email],
+        ['Phone', m.phone],
         ['Paid', payment.paidAt],
-        ['Stripe reference', payment.reference]
+        ['Reference', pi.id]
       ],
       link: { href: stripeUrl, label: 'Open in Stripe' },
-      footer: 'The client has been emailed a payment confirmation.'
+      footer: m.email ? 'The client has been emailed a payment confirmation.' : 'No client email on file, so no confirmation was sent.'
     })
   ]);
 }
@@ -108,11 +111,11 @@ async function handler(req, res) {
   try { event = JSON.parse(raw.toString('utf8')); } catch (e) { return res.status(400).json({ error: 'Bad JSON' }); }
 
   try {
-    const session = event.data && event.data.object;
-    if (event.type === 'checkout.session.completed' && session && session.payment_status === 'paid') {
-      await handlePaid(session, event.livemode);
-    } else if (event.type === 'checkout.session.async_payment_succeeded' && session) {
-      await handlePaid(session, event.livemode);
+    const obj = event.data && event.data.object;
+    // Only payments created by this website's payment page (they carry our metadata).
+    if (event.type === 'payment_intent.succeeded' && obj && obj.object === 'payment_intent' &&
+        obj.metadata && obj.metadata.source === 'website payment page') {
+      await handleSucceeded(obj, event.livemode);
     }
   } catch (err) {
     // Log the error type only, never the payer's details.
@@ -125,4 +128,4 @@ async function handler(req, res) {
 
 module.exports = handler;
 module.exports.config = { api: { bodyParser: false } };
-module.exports._test = { verifySignature, parseReference };
+module.exports._test = { verifySignature, fromMetadata };
